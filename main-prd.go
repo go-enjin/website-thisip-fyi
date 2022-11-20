@@ -36,7 +36,6 @@ var publicFs embed.FS
 var menuFsWWW embed.FS
 
 //go:embed themes/**
-//go:embed themes/*/layouts/_default/*
 var themeFs embed.FS
 
 func init() {
@@ -49,7 +48,7 @@ func init() {
 
 func thisIpFyiTheme() (t *theme.Theme) {
 	var err error
-	if t, err = theme.NewEmbed("themes/thisip-fyi"); err != nil {
+	if t, err = theme.NewEmbed("themes/thisip-fyi", themeFs); err != nil {
 		log.FatalF("error loading embed theme: %v", err)
 	} else {
 		log.DebugF("loaded embed theme: %v", t.Name)
