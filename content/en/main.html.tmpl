@@ -19,19 +19,29 @@ cache-control = "private, must-revalidate, no-transform"
     <div class="content">
         <div class="blocks">
 
-            {{ if or .WhoisError .Whois }}
+            {{ if .Whois }}
                 <article class="block" id="whois" data-block-tag="whois" data-block-type="content" data-block-profile="outer--inner" data-block-padding="none" data-block-margins="both">
                     <div class="content">
                         <header>
                             <h2>WHOIS</h2>
                         </header>
                         <section>
-                            {{ if .WhoiseError }}
-                                <p>{{ .WhoisError }}</p>
-                            {{ else }}
-                                <pre>{{ .Whois }}</pre>
+                            {{ range $idx,$group := .Whois.Groups }}
+                                <table>
+                                    <tbody>
+                                    {{ range $jdx,$k := (sortedKeys $group)}}
+                                        <tr>
+                                            <td>{{ $k }}</td>
+                                            <td>{{ index $group $k }}</td>
+                                        </tr>
+                                    {{ end }}
+                                    </tbody>
+                                </table>
                             {{ end }}
                         </section>
+                        <footer>
+                            <code>{{ .Whois.Comments }}</code>
+                        </footer>
                     </div>
                 </article>
             {{ end }}
