@@ -1,0 +1,64 @@
+{{{
+  "type": "page",
+  "title": "Terms of Use",
+  "description": "The Go-Enjin website terms of use page"
+}}}
+[
+
+    {
+        "type": "header",
+        "tag": "main-header",
+        "profile": "outer--inner",
+        "padding": "top",
+        "margins": "bottom",
+        "content": {
+            "header": [
+                "Terms of Use"
+            ]
+        }
+    },
+
+    {
+        "type": "content",
+        "tag": "introduction",
+        "profile": "outer--inner",
+        "padding": "both",
+        "margins": "both",
+        "jump-top": "true",
+        "jump-link": "true",
+        "content": {
+            "section": [
+                {
+                    "type": "p",
+                    "text": [
+                        "This website is a demonstration of the Go-Enjin project and the Semantic Enjin Theme in ",
+                        "particular. As such, there really aren't any real terms or conditions, other than the ",
+                         {
+                            "type": "footnote",
+                            "text": "Go-Enjin license",
+                            "note": [
+                                "see the ",
+                                {"type": "a", "href": "/license", "text": "Go-Enjin license"},
+                                " page for more details."
+                            ]
+                         },
+                        " requirements."
+                    ]
+                },
+                {
+                    "type": "p",
+                    "text": [
+                        "All media and content are property of the Go-Enjin project and are not permitted for any ",
+                        "use other than demonstrating Go-Enjin and the Semantic Enjin Theme."
+                    ]
+                },
+                {
+                    "type": "p",
+                    "text": [
+                        "-- The Go-Enjin website team"
+                    ]
+                }
+            ]
+        }
+    }
+]

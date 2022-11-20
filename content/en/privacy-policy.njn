@@ -1,0 +1,47 @@
+{{{
+  "type": "page",
+  "title": "Privacy Policy",
+  "description": "The Go-Enjin website privacy policy page"
+}}}
+[
+
+    {
+        "type": "header",
+        "tag": "main-header",
+        "profile": "outer--inner",
+        "padding": "top",
+        "margins": "bottom",
+        "content": {
+            "header": [
+                "Privacy Policy"
+            ]
+        }
+    },
+
+    {
+        "type": "content",
+        "tag": "introduction",
+        "profile": "outer--inner",
+        "padding": "both",
+        "margins": "both",
+        "jump-top": "true",
+        "jump-link": "true",
+        "content": {
+            "section": [
+                {
+                    "type": "p",
+                    "text": [
+                        "This website does not collect any personal information and all webserver traffic logs are ",
+                        "retained for seven days, for security and debugging purposes only."
+                    ]
+                },
+                {
+                    "type": "p",
+                    "text": [
+                        "-- The Go-Enjin website team"
+                    ]
+                }
+            ]
+        }
+    }
+]

@@ -1,0 +1,52 @@
+{{{
+  "type": "page",
+  "title": "Contact Us",
+  "description": "How to contact the Go-Enjin project"
+}}}
+[
+
+    {
+        "type": "header",
+        "tag": "main-header",
+        "profile": "outer--inner",
+        "padding": "top",
+        "margins": "bottom",
+        "content": {
+            "header": [
+                "Contact Us"
+            ]
+        }
+    },
+
+    {
+        "type": "content",
+        "tag": "introduction",
+        "profile": "outer--inner",
+        "padding": "both",
+        "margins": "both",
+        "jump-top": "true",
+        "jump-link": "true",
+        "content": {
+            "section": [
+                {
+                    "type": "p",
+                    "text": [
+                        "To contact us, please use the ",
+                        {
+                            "type": "a",
+                            "href": "mailto:go.enjin.org@gmail.com",
+                            "text": "go.enjin.org@gmail.com"
+                        },
+                        " address."
+                    ]
+                },
+                {
+                    "type": "p",
+                    "text": [
+                        "-- The Go-Enjin team"
+                    ]
+                }
+            ]
+        }
+    }
+]
