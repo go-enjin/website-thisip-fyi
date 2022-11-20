@@ -20,7 +20,6 @@ import (
 	"embed"
 
 	"github.com/go-enjin/be/features/fs/embeds/content"
-	"github.com/go-enjin/be/features/fs/embeds/locales"
 	"github.com/go-enjin/be/features/fs/embeds/menu"
 	"github.com/go-enjin/be/features/fs/embeds/public"
 	"github.com/go-enjin/be/pkg/log"
@@ -40,14 +39,10 @@ var menuFsWWW embed.FS
 //go:embed themes/*/layouts/_default/*
 var themeFs embed.FS
 
-//go:embed locales/*
-var localesFs embed.FS
-
 func init() {
 	fMenu = menu.New().MountPathFs("menus", "menus", menuFsWWW).Make()
 	fPublic = public.New().MountPathFs("/", "public", publicFs).Make()
 	fContent = content.New().MountPathFs("/", "content", contentFsWWW).Make()
-	fLocales = locales.New().Include("locales", localesFs).Make()
 
 	hotReload = false
 }

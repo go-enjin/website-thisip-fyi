@@ -39,7 +39,6 @@ import (
 )
 
 var (
-	fLocales feature.Feature
 	fContent feature.Feature
 	fPublic  feature.Feature
 	fMenu    feature.Feature
@@ -102,8 +101,7 @@ func main() {
 	features(enjin).
 		AddFeature(fMenu).
 		AddFeature(fPublic).
-		AddFeature(fContent).
-		AddFeature(fLocales)
+		AddFeature(fContent)
 	if err := enjin.Build().Run(os.Args); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)

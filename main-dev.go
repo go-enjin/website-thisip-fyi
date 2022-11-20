@@ -18,7 +18,6 @@ package main
 
 import (
 	"github.com/go-enjin/be/features/fs/locals/content"
-	"github.com/go-enjin/be/features/fs/locals/locales"
 	"github.com/go-enjin/be/features/fs/locals/menu"
 	"github.com/go-enjin/be/features/fs/locals/public"
 	"github.com/go-enjin/be/pkg/log"
@@ -33,7 +32,6 @@ func init() {
 	fMenu = menu.New().MountPath("menus", "menus").Make()
 	fPublic = public.New().MountPath("/", "public").Make()
 	fContent = content.New().MountPath("/", "content").Make()
-	fLocales = locales.New().Include("locales").Make()
 
 	hotReload = true
 }
