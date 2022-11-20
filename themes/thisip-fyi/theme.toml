@@ -1,0 +1,57 @@
+name = "ThisIp.Fyi"
+parent = "semantic-enjin"
+license = "Apache 2.0"
+licenselink = "https://go-enjin.org/license"
+description = "ThisIp.Fyi website theme."
+homepage = "https://thisip.fyi/"
+
+[author]
+    name = "The Go-Enjin Team"
+    homepage = "https://go-enjin.org/"
+
+[semantic.site]
+    menu.mobile.style = "side"
+    menu.desktop.style = "menu"
+    page.font-stylesheets = [
+        "https://fonts.googleapis.com/css2?display=swap&amp;family=Source%20Sans%20Pro&amp;family=Source%20Serif%20Pro"
+    ]
+    page.stylesheets = [
+        "/css/thisip-fyi.css"
+    ]
+
+[semantic.style]
+    color.working = "#ff901e"
+    color.recover = "#708090"
+    color.resting = "#d3d3d3"
+    color.meditate = "#ffffff"
+    color.social = "#ffd700"
+    color.active = "#ffa500"
+    color.material = "#0277bd"
+    color.light = "#ffffff"
+    color.dark = "#1d1d1d"
+
+    overlay.light.bg = "rgba(0,0,0,0.34)"
+    overlay.light.fg = "var(--color--light)"
+    overlay.dark.bg = "rgba(0,0,0,0.77)"
+    overlay.dark.fg = "var(--color--light)"
+
+    primary.fg = "var(--color--dark)"
+    primary.bg = "var(--color--light)"
+    secondary.fg = "var(--color--light)"
+    secondary.bg = "var(--color--recover)"
+    accent.fg = "var(--color--light)"
+    accent.bg = "var(--color--working)"
+    highlight.fg = "var(--color--dark)"
+    highlight.bg = "var(--color--social)"
+    alternate.fg = "var(--color--dark)"
+    alternate.bg = "var(--color--resting)"
+
+[semantic.style.icon]
+    info.content = "var(--fa--solid--info-circle)"
+    warn.content = "var(--fa--solid--question-circle)"
+    error.content = "var(--fa--solid--exclamation-circle)"
+    opened.content = "var(--fa--solid--chevron-down)"
+    closed.content = "var(--fa--solid--chevron-right)"
+    delete.content = "var(--fa--solid--times)"
+    link.content = "var(--fa--solid--link)"
+    jumptop.content = "var(--fa--solid--chevron-up)"

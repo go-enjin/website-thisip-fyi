@@ -1,0 +1,67 @@
++++
+type = "thisip"
+title = "nil"
+description = "Your current IP address on the internet"
+url = "/"
++++
+
+<section class="block" id="main-header" data-block-tag="main-header" data-block-type="header" data-block-profile="outer--inner" data-block-padding="top" data-block-margins="bottom" data-header-level="1" data-header-count="1">
+    <div class="content">
+        <h1>{{ .Request.RemoteAddr }}</h1>
+        <footer>
+            <p>For your information, this ip is: {{ .Request.RemoteAddr }}</p>
+        </footer>
+    </div>
+</section>
+
+<article class="block" id="main-sidebar" data-block-tag="main-sidebar" data-block-type="sidebar" data-block-profile="full--outer" data-block-padding="none" data-block-margins="bottom" data-sidebar-side="right" data-sidebar-stack="top" data-sidebar-sticky="true">
+    <div class="content">
+        <div class="blocks">
+
+            {{ if or .WhoisError .Whois }}
+                <article class="block" id="whois" data-block-tag="whois" data-block-type="content" data-block-profile="outer--inner" data-block-padding="none" data-block-margins="both">
+                    <div class="content">
+                        <header>
+                            <h2>WHOIS</h2>
+                        </header>
+                        <section>
+                            {{ if .WhoiseError }}
+                                <p>{{ .WhoisError }}</p>
+                            {{ else }}
+                                <pre>{{ .Whois }}</pre>
+                            {{ end }}
+                        </section>
+                    </div>
+                </article>
+            {{ end }}
+
+        </div>
+
+        <div class="aside">
+            <aside>
+
+                    <section class="block" id="nslookup" data-block-tag="nslookup" data-block-type="content" data-block-profile="full--full" data-block-padding="none" data-block-margins="both">
+                        <div class="content">
+                            <header>
+                                <h2>Name Service Lookup</h2>
+                            </header>
+                            <section>
+                                {{- if gt (len .LookupAddr) 0 }}
+                                    <p>The following domain names are assigned to this ip:</p>
+                                    <ul>
+                                        {{- range $idx,$domain := .LookupAddr }}
+                                            <li>{{ $domain }}</li>
+                                        {{- end }}
+                                    </ul>
+                                {{ else }}
+                                    <p>No domain names are assigned to this ip.</p>
+                                {{ end }}
+                            </section>
+                        </div>
+                    </section>
+
+            </aside>
+        </div>
+
+    </div>
+</article>
