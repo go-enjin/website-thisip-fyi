@@ -3,10 +3,9 @@ module github.com/go-enjin/website-thisip-fyi
 go 1.19
 
 require (
-	github.com/c-robinson/iplib v1.0.3
-	github.com/go-enjin/be v0.0.0-20221119225359-4b65ae8f7eda
+	github.com/go-enjin/be v0.0.0-20221120181906-a72cc81fdd81
 	github.com/go-enjin/golang-org-x-text v0.0.0-20221026190533-d0e9c4fd3b27
-	github.com/go-enjin/semantic-enjin-theme v0.0.0-20221119185251-5cdd4ba26ef9
+	github.com/go-enjin/semantic-enjin-theme v0.0.0-20221120200211-f8b1ef07e5b6
 	github.com/likexian/whois v1.14.3
 	github.com/urfave/cli/v2 v2.23.5
 )
