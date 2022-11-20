@@ -58,14 +58,14 @@ cache-control = "private, must-revalidate, no-transform"
                             </header>
                             <section>
                                 {{- if gt (len .LookupAddr) 0 }}
-                                    <p>The following domain names are assigned to this ip:</p>
+                                    <p>Domains assigned to <strong>{{ .Request.RemoteAddr }}</strong>:</p>
                                     <ul>
                                         {{- range $idx,$domain := .LookupAddr }}
                                             <li>{{ $domain }}</li>
                                         {{- end }}
                                     </ul>
                                 {{ else }}
-                                    <p>No domain names are assigned to this ip.</p>
+                                    <p>No domains assigned to <strong>{{ .Request.RemoteAddr }}</strong>.</p>
                                 {{ end }}
                             </section>
                         </div>
