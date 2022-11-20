@@ -18,8 +18,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/go-enjin/be/features/pages/formats/html"
-	"github.com/go-enjin/be/features/pages/formats/tmpl"
 	"github.com/go-enjin/be/features/requests/headers/proxy"
 	auth "github.com/go-enjin/be/features/restrict/basic-auth"
 
@@ -61,12 +59,7 @@ func setup(eb *be.EnjinBuilder) *be.EnjinBuilder {
 		SiteCopyrightName("Go-Enjin").
 		SiteCopyrightNotice("© 2022 All rights reserved").
 		AddFeature(proxy.New().Enable().Make()).
-		AddFeature(
-			formats.New().
-				AddFormat(html.New().Make()).
-				AddFormat(tmpl.New().Make()).
-				Make(),
-		).
+		AddFeature(formats.New().Defaults().Make()).
 		AddTheme(semantic.SemanticEnjinTheme()).
 		AddTheme(thisIpFyiTheme()).
 		SetTheme("thisip-fyi").
