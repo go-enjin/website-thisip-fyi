@@ -119,9 +119,7 @@ func (f *CFeature) ProcessRequestPageType(r *http.Request, p *page.Page) (pg *pa
 			if whoisInfo != nil {
 				p.Context.SetSpecific("Whois", whoisInfo)
 			}
-			if len(nslookup) > 0 {
-				p.Context.SetSpecific("LookupAddr", nslookup)
-			}
+			p.Context.SetSpecific("LookupAddr", nslookup)
 		}
 		p.Context.SetSpecific("Title", r.RemoteAddr)
 		pg = p
@@ -135,15 +133,17 @@ func (f *CFeature) lookupInfo(addr string) (info *whois.Info, nslookup []string)
 	var err error
 	if nslookup, ok = f.nslookup[addr]; !ok {
 		if nslookup, err = net.LookupAddr(addr); err != nil {
-			log.ErrorF("error net.LookupAddr: %v - %v", addr, err.Error())
+			log.WarnF("error net.LookupAddr: %v - %v", addr, err.Error())
 			delete(f.nslookup, addr)
+			nslookup = make([]string, 0)
 		} else {
 			f.nslookup[addr] = nslookup
 		}
 	}
 	if info, ok = f.whois[addr]; !ok {
 		if info, err = whois.LookupAndParse(addr); err != nil {
-			log.ErrorF("error whois.LookupAndParse: %v - %v", addr, err.Error())
+			log.WarnF("error whois.LookupAndParse: %v - %v", addr, err.Error())
+			info = nil
 		} else {
 			f.whois[addr] = info
 		}
