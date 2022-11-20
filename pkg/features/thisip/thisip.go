@@ -23,10 +23,11 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"github.com/likexian/whois"
-
 	"github.com/go-enjin/be/pkg/feature"
+	"github.com/go-enjin/be/pkg/log"
 	"github.com/go-enjin/be/pkg/page"
+
+	"github.com/go-enjin/website-thisip-fyi/pkg/features/whois"
 )
 
 var (
@@ -46,7 +47,7 @@ type CFeature struct {
 	cli   *cli.Context
 	enjin feature.Internals
 
-	whois    map[string]string
+	whois    map[string]*whois.Info
 	nslookup map[string][]string
 
 	sync.RWMutex
@@ -68,7 +69,7 @@ func (f *CFeature) Make() Feature {
 
 func (f *CFeature) Init(this interface{}) {
 	f.CFeature.Init(this)
-	f.whois = make(map[string]string)
+	f.whois = make(map[string]*whois.Info)
 	f.nslookup = make(map[string][]string)
 }
 
@@ -106,43 +107,46 @@ func (f *CFeature) ProcessRequestPageType(r *http.Request, p *page.Page) (pg *pa
 			p.Context.SetSpecific("Layout", "none")
 			p.Context.SetSpecific("ContentType", "text/plain; charset=utf-8")
 			content := "address: " + r.RemoteAddr
-			if values, ok := f.nslookup[r.RemoteAddr]; ok {
-				content += "\n" + fmt.Sprintf("domains: %v", strings.Join(values, ", "))
-			} else if names, ee := net.LookupAddr(r.RemoteAddr); ee == nil {
-				content += "\n" + fmt.Sprintf("domains: %v", strings.Join(names, ", "))
-				f.nslookup[r.RemoteAddr] = names
-			}
-			if value, ok := f.whois[r.RemoteAddr]; ok {
-				content += "\nwhois:" + value
-			} else if results, ee := whois.Whois(r.RemoteAddr); ee == nil {
-				content += "\nwhois:" + results
-				f.whois[r.RemoteAddr] = results
-			}
+			whoisInfo, nslookup := f.lookupInfo(r.RemoteAddr)
+			content += "\n\nnslookup: " + strings.Join(nslookup, ", ")
+			content += "\n\nwhois:\n" + whoisInfo.Response
 			p.Content = content
 			p.Context.SetSpecific("Content", content)
 			p.Context.SetSpecific("ContentDisposition", fmt.Sprintf(`attachment; filename="%s.txt"`, r.RemoteAddr))
 
 		default:
-			if values, ok := f.nslookup[r.RemoteAddr]; ok {
-				p.Context.SetSpecific("LookupAddr", values)
-			} else if names, ee := net.LookupAddr(r.RemoteAddr); ee != nil {
-				p.Context.SetSpecific("LookupAddrError", ee.Error())
-			} else {
-				p.Context.SetSpecific("LookupAddr", names)
-				f.nslookup[r.RemoteAddr] = names
+			whoisInfo, nslookup := f.lookupInfo(r.RemoteAddr)
+			if whoisInfo != nil {
+				p.Context.SetSpecific("Whois", whoisInfo)
 			}
-			if value, ok := f.whois[r.RemoteAddr]; ok {
-				p.Context.SetSpecific("Whois", value)
-			} else if results, ee := whois.Whois(r.RemoteAddr); ee != nil {
-				p.Context.SetSpecific("WhoisError", ee.Error())
-			} else {
-				p.Context.SetSpecific("Whois", results)
-				f.whois[r.RemoteAddr] = results
+			if len(nslookup) > 0 {
+				p.Context.SetSpecific("LookupAddr", nslookup)
 			}
 		}
 		p.Context.SetSpecific("Title", r.RemoteAddr)
 		pg = p
 		processed = true
+	}
+	return
+}
+
+func (f *CFeature) lookupInfo(addr string) (info *whois.Info, nslookup []string) {
+	var ok bool
+	var err error
+	if nslookup, ok = f.nslookup[addr]; !ok {
+		if nslookup, err = net.LookupAddr(addr); err != nil {
+			log.ErrorF("error net.LookupAddr: %v - %v", addr, err.Error())
+			delete(f.nslookup, addr)
+		} else {
+			f.nslookup[addr] = nslookup
+		}
+	}
+	if info, ok = f.whois[addr]; !ok {
+		if info, err = whois.LookupAndParse(addr); err != nil {
+			log.ErrorF("error whois.LookupAndParse: %v - %v", addr, err.Error())
+		} else {
+			f.whois[addr] = info
+		}
 	}
 	return
 }
