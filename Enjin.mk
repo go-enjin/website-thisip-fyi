@@ -17,7 +17,7 @@
 #: uncomment to echo instead of execute
 #CMD=echo
 
-ENJIN_MK_VERSION = v0.1.7
+ENJIN_MK_VERSION = v0.1.9
 
 SHELL = /bin/bash
 
@@ -39,7 +39,7 @@ BUILD_TAGS ?=
 DEV_BUILD_TAGS ?= ${BUILD_TAGS}
 GOPKG_KEYS ?=
 
-CLEAN      ?= ${APP_NAME}
+CLEAN      ?= ${APP_NAME} cpu.pprof mem.pprof
 DIST_CLEAN ?=
 
 GOLANG ?= 1.18.5
@@ -64,6 +64,8 @@ UNTAGGED_VERSION ?= v0.0.0
 
 VERSION ?= $(call _be_version)
 RELEASE ?= $(call _be_release)
+
+PROFILE_PATH ?= .
 
 define _check_make_target =
 $(shell \
@@ -290,7 +292,9 @@ define _help_nodejs_yarn =
 	fi
 endef
 
-.PHONY: all help tidy local unlocal be-update clean dist-clean build dev release run
+.PHONY: all help tidy local unlocal be-update clean dist-clean build release \
+	run dev audit heroku-push heroku-logs build-dev-run release-dev-run stop \
+	profile.mem profile.cpu
 
 help: NODE_PATHS = $(call _list_node_paths)
 help:
@@ -312,6 +316,7 @@ help:
 	@echo "Runtime Targets:"
 	@echo "  dev           set for DEBUG mode and run ./${APP_NAME}"
 	@echo "  run           execute ./${APP_NAME}"
+	@echo "  stop          interrupt running ${APP_NAME}"
 ifneq ($(call _deps_present),)
 	@echo
 	@echo "Auditing Targets:"
@@ -319,6 +324,12 @@ endif
 ifneq ($(call _go_present),)
 	@echo "  audit		runs enjenv go-audit-report"
 endif
+	@echo
+	@echo "profiling targets:"
+	@echo "  profile.cpu   make build dev with cpu profiling"
+	@echo "  profile.mem   make build dev with mem profiling"
+	@echo
+	@echo "  note: use 'make stop' from another terminal to end profiling"
 	@echo
 	@echo "helper targets:"
 	@echo "  help          this screen of output"
@@ -492,9 +503,7 @@ define _run =
 		false; \
 	fi
 	@echo "# running ${APP_NAME} -- ${RUN_ARGV}"
-	@${CMD} \
-		$(call _env_run_vars) \
-		./${APP_NAME} ${RUN_ARGV}
+	@${CMD} bash -c "set -m; $(call _env_run_vars) ./${APP_NAME} ${RUN_ARGV}"
 endef
 
 run:
@@ -557,8 +566,47 @@ heroku-logs:
 
 # this requires Term::ANSIColor, will error if not present,
 # use `make build dev` instead
+
 build-dev-run: build
 	@( make dev 2>&1 ) | perl -p -e 'use Term::ANSIColor qw(colored);while (my $$line = <>) {print STDOUT process_line($$line)."\n";}exit(0);sub process_line {my ($$line) = @_;chomp($$line);if ($$line =~ m!^\[(\d+\-\d+\.\d+)\]\s+([A-Z]+)\s+(.+?)\s*$$!) {my ($$datestamp, $$level, $$message) = ($$1, $$2, $$3);my $$colour = "white";if ($$level eq "ERROR") {$$colour = "bold white on_red";} elsif ($$level eq "INFO") {$$colour = "green";} elsif ($$level eq "DEBUG") {$$colour = "yellow";}my $$out = "[".colored($$datestamp, "blue")."]";$$out .= " ".colored($$level, $$colour);if ($$level eq "DEBUG") {$$out .= "\t";if ($$message =~ m!^(.+?)\:(\d+)\s+\[(.+?)\]\s+(.+?)\s*$$!) {my ($$file, $$ln, $$tag, $$info) = ($$1, $$2, $$3, $$4);$$out .= colored($$file, "bright_blue");$$out .= ":".colored($$ln, "blue");$$out .= " [".colored($$tag, "bright_blue")."]";$$out .= " ".colored($$info, "bold cyan");} else {$$out .= $$message;}} elsif ($$level eq "ERROR") {$$out .= "\t".colored($$message, $$colour);} elsif ($$level eq "INFO") {$$out .= "\t".colored($$message, $$colour);} else {$$out .= "\t".$$message;}return $$out;}return $$line;}'
 
 release-dev-run: release
 	@( make dev 2>&1 ) | perl -p -e 'use Term::ANSIColor qw(colored);while (my $$line = <>) {print STDOUT process_line($$line)."\n";}exit(0);sub process_line {my ($$line) = @_;chomp($$line);if ($$line =~ m!^\[(\d+\-\d+\.\d+)\]\s+([A-Z]+)\s+(.+?)\s*$$!) {my ($$datestamp, $$level, $$message) = ($$1, $$2, $$3);my $$colour = "white";if ($$level eq "ERROR") {$$colour = "bold white on_red";} elsif ($$level eq "INFO") {$$colour = "green";} elsif ($$level eq "DEBUG") {$$colour = "yellow";}my $$out = "[".colored($$datestamp, "blue")."]";$$out .= " ".colored($$level, $$colour);if ($$level eq "DEBUG") {$$out .= "\t";if ($$message =~ m!^(.+?)\:(\d+)\s+\[(.+?)\]\s+(.+?)\s*$$!) {my ($$file, $$ln, $$tag, $$info) = ($$1, $$2, $$3, $$4);$$out .= colored($$file, "bright_blue");$$out .= ":".colored($$ln, "blue");$$out .= " [".colored($$tag, "bright_blue")."]";$$out .= " ".colored($$info, "bold cyan");} else {$$out .= $$message;}} elsif ($$level eq "ERROR") {$$out .= "\t".colored($$message, $$colour);} elsif ($$level eq "INFO") {$$out .= "\t".colored($$message, $$colour);} else {$$out .= "\t".$$message;}return $$out;}return $$line;}'
+
+stop: export RUN_BIN=${APP_NAME}
+stop: export RUN_PID=$(shell ps -C ${APP_NAME} | awk '{print $$1}' | grep -v PID)
+stop:
+	@if [ "${RUN_PID}" != "" ]; then \
+		echo "# stopping ${APP_NAME}: ${RUN_PID}"; \
+		${CMD} kill -INT "${RUN_PID}"; \
+	else \
+		echo "# ${APP_NAME} already stopped"; \
+	fi
+
+profile.mem: export BE_PROFILE_MODE=mem
+profile.mem: export BE_PROFILE_PATH=.
+profile.mem: build dev
+	@if [ -f mem.pprof ]; then \
+		echo "# <Enter> to load mem.pprof, <CTRL+c> to abort"; \
+		read JUNK; \
+		echo "# pprof service starting (:8080)"; \
+		bash -c 'set -m; ( go tool pprof -http=:8080 mem.pprof ) 2> /dev/null'; \
+		echo ""; \
+		echo "# pprof service shutdown"; \
+	else \
+		echo "# missing mem.pprof"; \
+	fi
+
+profile.cpu: export BE_PROFILE_MODE=cpu
+profile.cpu: export BE_PROFILE_PATH=${PROFILE_PATH}
+profile.cpu: build dev
+	@if [ -f cpu.pprof ]; then \
+		echo "# <Enter> to load cpu.pprof, <CTRL+c> to abort"; \
+		read JUNK; \
+		echo "# pprof service starting (:8080)"; \
+		bash -c 'set -m; ( go tool pprof -http=:8080 cpu.pprof ) 2> /dev/null'; \
+		echo ""; \
+		echo "# pprof service shutdown"; \
+	else \
+		echo "# missing cpu.pprof"; \
+	fi
