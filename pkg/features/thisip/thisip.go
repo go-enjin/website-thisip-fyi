@@ -27,7 +27,7 @@ import (
 	"github.com/go-enjin/be/pkg/log"
 	"github.com/go-enjin/be/pkg/page"
 
-	"github.com/go-enjin/website-thisip-fyi/pkg/features/whois"
+	"github.com/go-enjin/website-thisip-fyi/pkg/whois"
 )
 
 var (
