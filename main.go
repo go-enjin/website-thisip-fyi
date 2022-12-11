@@ -29,6 +29,7 @@ import (
 	semantic "github.com/go-enjin/semantic-enjin-theme"
 
 	"github.com/go-enjin/be"
+	"github.com/go-enjin/be/features/defaults/pgc"
 	"github.com/go-enjin/be/features/log/papertrail"
 	"github.com/go-enjin/be/features/pages/formats"
 	"github.com/go-enjin/be/pkg/feature"
@@ -58,6 +59,7 @@ func setup(eb *be.EnjinBuilder) *be.EnjinBuilder {
 		SiteTagLine("This IP for your information.").
 		SiteCopyrightName("Go-Enjin").
 		SiteCopyrightNotice("© 2022 All rights reserved").
+		AddFeature(pgc.New().Make()).
 		AddFeature(proxy.New().Enable().Make()).
 		AddFeature(formats.New().Defaults().Make()).
 		AddTheme(semantic.SemanticEnjinTheme()).
