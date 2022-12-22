@@ -21,7 +21,7 @@ APP_SUMMARY ?= thisip.fyi
 
 DENY_DURATION ?= 60
 
-COMMON_TAGS = htmlify,page_robots,header_proxy,papertrail,basic_auth
+COMMON_TAGS = htmlify,stock_pgc,page_robots,header_proxy,papertrail,basic_auth
 BUILD_TAGS = embeds,$(COMMON_TAGS)
 DEV_BUILD_TAGS = locals,$(COMMON_TAGS)
 EXTRA_PKGS =

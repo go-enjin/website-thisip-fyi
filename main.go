@@ -19,18 +19,19 @@ import (
 	"os"
 
 	"github.com/go-enjin/be/features/requests/headers/proxy"
-	auth "github.com/go-enjin/be/features/restrict/basic-auth"
+	"github.com/go-enjin/be/features/restrict/basic-auth"
+
+	"github.com/go-enjin/golang-org-x-text/language"
 
 	"github.com/go-enjin/be/features/outputs/htmlify"
 	"github.com/go-enjin/be/features/pages/robots"
 	"github.com/go-enjin/be/pkg/lang"
-	"github.com/go-enjin/golang-org-x-text/language"
 
 	semantic "github.com/go-enjin/semantic-enjin-theme"
 
 	"github.com/go-enjin/be"
-	"github.com/go-enjin/be/features/defaults/pgc"
 	"github.com/go-enjin/be/features/log/papertrail"
+	"github.com/go-enjin/be/features/pages/caching/stock-pgc"
 	"github.com/go-enjin/be/features/pages/formats"
 	"github.com/go-enjin/be/pkg/feature"
 
