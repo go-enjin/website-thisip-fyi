@@ -3,11 +3,11 @@ module github.com/go-enjin/website-thisip-fyi
 go 1.19
 
 require (
-	github.com/go-enjin/be v0.0.0-20230118213948-43074a90f14f
+	github.com/go-enjin/be v0.0.0-20230202001255-bb925bfcce8b
 	github.com/go-enjin/golang-org-x-text v0.0.0-20221026190533-d0e9c4fd3b27
-	github.com/go-enjin/semantic-enjin-theme v0.0.0-20230101220040-3b362710245c
+	github.com/go-enjin/semantic-enjin-theme v0.0.0-20230202001408-8da7742ce68d
 	github.com/likexian/whois v1.14.3
-	github.com/urfave/cli/v2 v2.23.5
+	github.com/urfave/cli/v2 v2.24.2
 )
 
 require (
@@ -15,7 +15,7 @@ require (
 	github.com/GehirnInc/crypt v0.0.0-20200316065508-bb7000b8a962 // indirect
 	github.com/RoaringBitmap/roaring v1.2.1 // indirect
 	github.com/abbot/go-http-auth v0.4.0 // indirect
-	github.com/alecthomas/participle/v2 v2.0.0-beta.5 // indirect
+	github.com/alecthomas/participle/v2 v2.0.0-beta.5.0.20221205101428-1f05da7649a8 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/bits-and-blooms/bitset v1.3.3 // indirect
