@@ -3,8 +3,8 @@ module github.com/go-enjin/website-thisip-fyi
 go 1.19
 
 require (
-	github.com/go-enjin/be v0.0.0-20230219182730-fdabda8c29d2
-	github.com/go-enjin/golang-org-x-text v0.0.0-20221026190533-d0e9c4fd3b27
+	github.com/go-enjin/be v0.0.0-20230219212728-0eada5880a1d
+	github.com/go-enjin/golang-org-x-text v0.0.0-20230219204830-4f2b7b481f16
 	github.com/go-enjin/semantic-enjin-theme v0.0.0-20230219182916-a0b7037bc6db
 	github.com/likexian/whois v1.14.3
 	github.com/urfave/cli/v2 v2.24.2
