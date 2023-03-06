@@ -3,11 +3,11 @@ module github.com/go-enjin/website-thisip-fyi
 go 1.19
 
 require (
-	github.com/go-enjin/be v0.0.0-20230219212728-0eada5880a1d
+	github.com/go-enjin/be v0.0.0-20230305033309-be485cff3d1c
 	github.com/go-enjin/golang-org-x-text v0.0.0-20230219204830-4f2b7b481f16
-	github.com/go-enjin/semantic-enjin-theme v0.0.0-20230219213155-87745cb247ad
+	github.com/go-enjin/semantic-enjin-theme v0.0.0-20230306025245-3ca32bf5b27f
 	github.com/likexian/whois v1.14.3
-	github.com/urfave/cli/v2 v2.24.2
+	github.com/urfave/cli/v2 v2.14.1
 )
 
 require (
@@ -46,7 +46,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.7 // indirect
 	github.com/go-chi/hostrouter v0.2.0 // indirect
 	github.com/go-curses/cdk v0.5.14 // indirect
-	github.com/go-curses/ctk v0.5.5 // indirect
+	github.com/go-curses/ctk v0.5.6 // indirect
 	github.com/go-curses/term v1.2.2-gocurses.1 // indirect
 	github.com/go-curses/terminfo v1.0.0 // indirect
 	github.com/go-enjin/github-com-djherbis-times v0.0.0-20221101184323-aeef8854ee8a // indirect
