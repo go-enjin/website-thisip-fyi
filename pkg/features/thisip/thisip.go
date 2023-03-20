@@ -25,6 +25,7 @@ import (
 
 	"github.com/go-enjin/be/pkg/feature"
 	"github.com/go-enjin/be/pkg/log"
+	beNet "github.com/go-enjin/be/pkg/net"
 	"github.com/go-enjin/be/pkg/page"
 
 	"github.com/go-enjin/website-thisip-fyi/pkg/whois"
@@ -131,6 +132,13 @@ func (f *CFeature) ProcessRequestPageType(r *http.Request, p *page.Page) (pg *pa
 func (f *CFeature) lookupInfo(addr string) (info *whois.Info, nslookup []string) {
 	var ok bool
 	var err error
+
+	if beNet.IsNetIpPrivate(net.ParseIP(addr)) {
+		info = nil
+		nslookup = append(nslookup, "(local/private address)")
+		return
+	}
+
 	if nslookup, ok = f.nslookup[addr]; !ok {
 		if nslookup, err = net.LookupAddr(addr); err != nil {
 			log.WarnF("error net.LookupAddr: %v - %v", addr, err.Error())
