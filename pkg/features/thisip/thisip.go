@@ -110,7 +110,9 @@ func (f *CFeature) ProcessRequestPageType(r *http.Request, p *page.Page) (pg *pa
 			content := "address: " + r.RemoteAddr
 			whoisInfo, nslookup := f.lookupInfo(r.RemoteAddr)
 			content += "\n\nnslookup: " + strings.Join(nslookup, ", ")
-			content += "\n\nwhois:\n" + whoisInfo.Response
+			if whoisInfo != nil {
+				content += "\n\nwhois:\n" + whoisInfo.Response
+			}
 			p.Content = content
 			p.Context.SetSpecific("Content", content)
 			p.Context.SetSpecific("ContentDisposition", fmt.Sprintf(`attachment; filename="%s.txt"`, r.RemoteAddr))
