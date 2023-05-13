@@ -30,7 +30,7 @@
 .PHONY: _yarn_tag_install
 .PHONY: list-make-targets
 
-ENJIN_MK_VERSION = v0.2.4
+ENJIN_MK_VERSION = v0.2.7
 
 SHELL = /bin/bash
 
@@ -83,14 +83,7 @@ HEROKU_BIN := $(shell which heroku)
 DLV_PORT ?= 2345
 DLV_DEBUG ?=
 
-ifdef override_run
-ifdef override_dlv
 DLV_BIN := $(shell which dlv)
-endif
-else
-DLV_BIN := $(shell which dlv)
-endif
-
 
 ifeq ($(origin ENJENV_BIN),undefined)
 ENJENV_BIN:=$(shell which enjenv)
@@ -201,10 +194,12 @@ _BUILD_TAGS = $(shell \
 echo "_build_tags" >> ${_INTERNAL_BUILD_LOG_}; \
 if [ "${RELEASE_BUILD}" == "true" ]; then \
 	if [ "${BUILD_TAGS}" != "" ]; then \
-		echo "-tags ${BUILD_TAGS}"; \
+		tags=`echo "${BUILD_TAGS}" | perl -pe 's!\s+!,!msg;s!,$$!!;'`; \
+		echo "-tags $${tags}"; \
 	fi; \
 elif [ "${DEV_BUILD_TAGS}" != "" ]; then \
-	echo "-tags ${DEV_BUILD_TAGS}"; \
+	tags=`echo "${DEV_BUILD_TAGS}" | perl -pe 's!\s+!,!msg;s!,$$!!;'`; \
+	echo "-tags $${tags}"; \
 fi)
 
 define _check_make_target
@@ -412,20 +407,15 @@ endif
 
 define _run
 	$(call _get_run_checks) \
-	if [ "${DEBUG}" == "true" ]; then \
-		if [ "${DLV_DEBUG}" == "true" -a -n "${DLV_BIN}" ]; then \
-			echo "# delving ${APP_NAME} ${RUN_ARGV}"; \
-			$(call _get_run_vars) \
-			${DLV_BIN} --listen=:${DLV_PORT} --headless=true --api-version=2 --accept-multiclient \
-				exec -- ./${APP_NAME} ${RUN_ARGV}; \
-		else \
-			echo "# running ${APP_NAME} ${RUN_ARGV}"; \
-			${CMD} $(call _get_run_vars) ./${APP_NAME} ${RUN_ARGV}; \
-		fi; \
+	if [ "${DLV_DEBUG}" == "true" -a -n "${DLV_BIN}" ]; then \
+		echo "# delving ${APP_NAME} ${RUN_ARGV}"; \
+		${CMD} $(call _get_run_vars) \
+		${DLV_BIN} --listen=:${DLV_PORT} --headless=true --api-version=2 --accept-multiclient \
+			exec -- ./${APP_NAME} ${RUN_ARGV}; \
 	else \
 		echo "# running ${APP_NAME} ${RUN_ARGV}"; \
 		${CMD} $(call _get_run_vars) ./${APP_NAME} ${RUN_ARGV}; \
-	fi;
+	fi
 endef
 
 define is_defined
@@ -716,6 +706,7 @@ unlocal: _golang
 	@$(if ${GOPKG_KEYS},$(foreach key,${GOPKG_KEYS},$(call _make_go_unlocal,$($(key)_GO_PACKAGE));))
 	@$(call _make_go_unlocal,${GO_ENJIN_PKG})
 
+be-update: export GOPROXY=direct
 be-update: PKG_LIST = ${GO_ENJIN_PKG}@latest $(call _make_extra_pkgs)
 be-update: _golang
 	@$(call _validate_extra_pkgs)
@@ -825,10 +816,14 @@ ifneq (${BE_CONSOLE_KEYS},)
 console:
 	@_DEFAULT_=$(call _default_console_name); \
 	if [ -n "$${_DEFAULT_}" ]; then \
-		$(MAKE) RUN_ARGV="console $${_DEFAULT_}" run; \
+		$(MAKE) DEBUG=${DEBUG} DLV_DEBUG=${DLV_DEBUG} RUN_ARGV="console $${_DEFAULT_}" run; \
 	else \
 		echo "# default/first console not found"; \
 	fi
+
+dlv-console: export DEBUG=true
+dlv-console: export DLV_DEBUG=true
+dlv-console: console
 
 list-consoles:
 	@for name in $(if ${BE_CONSOLE_KEYS},$(foreach key,${BE_CONSOLE_KEYS}, $($(key)_CONSOLE_NAME))); do \
