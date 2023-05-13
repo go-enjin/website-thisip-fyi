@@ -1,4 +1,4 @@
-//go:build embeds
+//go:build production
 
 // Copyright (c) 2022  The Go-Enjin Authors
 //
@@ -19,11 +19,12 @@ package main
 import (
 	"embed"
 
-	"github.com/go-enjin/be/features/fs/embeds/content"
-	"github.com/go-enjin/be/features/fs/embeds/menu"
-	"github.com/go-enjin/be/features/fs/embeds/public"
-	"github.com/go-enjin/be/pkg/log"
-	"github.com/go-enjin/be/pkg/theme"
+	semantic "github.com/go-enjin/semantic-enjin-theme"
+
+	"github.com/go-enjin/be/features/fs/content"
+	"github.com/go-enjin/be/features/fs/menu"
+	"github.com/go-enjin/be/features/fs/public"
+	"github.com/go-enjin/be/features/fs/themes"
 )
 
 //go:embed content/**
@@ -39,19 +40,23 @@ var menuFsWWW embed.FS
 var themeFs embed.FS
 
 func init() {
-	fMenu = menu.New().MountPathFs("menus", "menus", menuFsWWW).Make()
-	fPublic = public.New().MountPathFs("/", "public", publicFs).Make()
-	fContent = content.New().MountPathFs("/", "content", contentFsWWW).Make()
+	fMenu = menu.New().
+		MountEmbedPath("/", "menus", menuFsWWW).
+		Make()
+	fPublic = public.New().
+		MountEmbedPath("/", "public", publicFs).
+		Make()
+	fContent = content.New().
+		MountEmbedPath("/", "content", contentFsWWW).
+		AddToIndexProviders("pages-pql").
+		SetKeyValueCache(gFsContentKvsFeature, gFsContentKvsCache).
+		Make()
+
+	fThemes = themes.New().
+		AddTheme(semantic.Theme()).
+		EmbedTheme("themes/thisip-fyi", themeFs).
+		SetTheme("thisip-fyi").
+		Make()
 
 	hotReload = false
-}
-
-func thisIpFyiTheme() (t *theme.Theme) {
-	var err error
-	if t, err = theme.NewEmbed("themes/thisip-fyi", themeFs); err != nil {
-		log.FatalF("error loading embed theme: %v", err)
-	} else {
-		log.DebugF("loaded embed theme: %v", t.Name)
-	}
-	return
 }

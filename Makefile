@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+-include .env
+
 BE_LOCAL_PATH ?= ../be
 
 APP_NAME    ?= be-thisip-fyi
@@ -21,10 +23,18 @@ APP_SUMMARY ?= thisip.fyi
 
 DENY_DURATION ?= 60
 
-COMMON_TAGS = htmlify,stock_pgc,page_robots,header_proxy,papertrail,basic_auth
-BUILD_TAGS = embeds,$(COMMON_TAGS)
-DEV_BUILD_TAGS = locals,$(COMMON_TAGS)
-EXTRA_PKGS =
+COMMON_TAGS += htmlify
+COMMON_TAGS += papertrail
+COMMON_TAGS += header_proxy
+COMMON_TAGS += basic_auth
+COMMON_TAGS += driver_kvs_gocache memory
+COMMON_TAGS += page_pql
+COMMON_TAGS += page_robots
+COMMON_TAGS += driver_fs_embed
+COMMON_TAGS += fs_theme fs_menu fs_content fs_public
+
+BUILD_TAGS     = production embeds $(COMMON_TAGS)
+DEV_BUILD_TAGS = locals $(COMMON_TAGS)
 
 # Custom go.mod locals
 GOPKG_KEYS = SET GOXT DJHT

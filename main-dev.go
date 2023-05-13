@@ -1,4 +1,4 @@
-//go:build locals || !embeds
+//go:build !production
 
 // Copyright (c) 2022  The Go-Enjin Authors
 //
@@ -17,31 +17,37 @@
 package main
 
 import (
-	"github.com/go-enjin/be/features/fs/locals/content"
-	"github.com/go-enjin/be/features/fs/locals/menu"
-	"github.com/go-enjin/be/features/fs/locals/public"
+	semantic "github.com/go-enjin/semantic-enjin-theme"
+
+	"github.com/go-enjin/be/features/fs/content"
+	"github.com/go-enjin/be/features/fs/menu"
+	"github.com/go-enjin/be/features/fs/public"
+	"github.com/go-enjin/be/features/fs/themes"
 	"github.com/go-enjin/be/pkg/log"
-	"github.com/go-enjin/be/pkg/theme"
 )
 
 func init() {
 	// locals environment, early startup debug logging
-	// log.Config.LogLevel = log.LevelDebug
-	// log.Config.Apply()
+	log.Config.LogLevel = log.LevelDebug
+	log.Config.Apply()
 
-	fMenu = menu.New().MountPath("menus", "menus").Make()
-	fPublic = public.New().MountPath("/", "public").Make()
-	fContent = content.New().MountPath("/", "content").Make()
+	fMenu = menu.New().
+		MountLocalPath("/", "menus").
+		Make()
+	fPublic = public.New().
+		MountLocalPath("/", "public").
+		Make()
+	fContent = content.New().
+		MountLocalPath("/", "content").
+		AddToIndexProviders("pages-pql").
+		SetKeyValueCache(gFsContentKvsFeature, gFsContentKvsCache).
+		Make()
+
+	fThemes = themes.New().
+		AddTheme(semantic.Theme()).
+		LocalTheme("themes/thisip-fyi").
+		SetTheme("thisip-fyi").
+		Make()
 
 	hotReload = true
-}
-
-func thisIpFyiTheme() (t *theme.Theme) {
-	var err error
-	if t, err = theme.NewLocal("themes/thisip-fyi"); err != nil {
-		log.FatalF("error loading local theme: %v", err)
-	} else {
-		log.DebugF("loaded local theme: %v", t.Name)
-	}
-	return
 }
