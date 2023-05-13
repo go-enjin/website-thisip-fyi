@@ -54,7 +54,7 @@ func init() {
 
 	fThemes = themes.New().
 		AddTheme(semantic.Theme()).
-		EmbedTheme("themes/thisip-fyi", themeFs).
+		EmbedTheme("thisip-fyi", "themes/thisip-fyi", themeFs).
 		SetTheme("thisip-fyi").
 		Make()
 
