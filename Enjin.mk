@@ -30,11 +30,9 @@
 .PHONY: _yarn_tag_install
 .PHONY: list-make-targets
 
-ENJIN_MK_VERSION = v0.2.7
+ENJIN_MK_VERSION = v0.2.8
 
 SHELL = /bin/bash
-
-DEBUG ?= false
 
 ifeq ($(origin APP_NAME),undefined)
 APP_NAME := $(shell basename `pwd`)
@@ -43,15 +41,26 @@ APP_SUMMARY ?= Go-Enjin
 ENV_PREFIX  ?= BE
 APP_PREFIX  ?= ${USER}
 
+UNTAGGED_VERSION ?= v0.0.0
+
+BE_DEBUG ?= false
+
 LISTEN        ?=
 PORT          ?= 3334
-DEBUG         ?= false
+DEBUG         ?= ${BE_DEBUG}
 STRICT        ?= false
 DOMAIN        ?=
 DENY_DURATION ?= 86400
 
-BUILD_TAGS ?=
-DEV_BUILD_TAGS ?= ${BUILD_TAGS}
+BUILD_TAGS        ?=
+BUILD_ARGV        ?=
+BUILD_LDFLAGS     ?=
+DEV_BUILD_TAGS    ?= ${BUILD_TAGS}
+DEV_BUILD_ARGV    ?=
+DEV_BUILD_GCFLAGS ?=
+
+
+
 GOPKG_KEYS ?=
 
 CLEAN      ?= ${APP_NAME} cpu.pprof mem.pprof
@@ -77,13 +86,24 @@ _INTERNAL_BUILD_LOG_ := /dev/null
 DEFAULT_CONSOLE_KEY ?=
 BE_CONSOLE_KEYS ?=
 
-
 HEROKU_BIN := $(shell which heroku)
 
 DLV_PORT ?= 2345
 DLV_DEBUG ?=
 
 DLV_BIN := $(shell which dlv)
+
+ENJENV_PKG  ?= github.com/go-enjin/enjenv/cmd/enjenv@latest
+ENJENV_DIR_NAME ?= .enjenv
+ENJENV_DIR ?= ${ENJENV_DIR_NAME}
+
+PROFILE_PATH ?= .
+
+RUN_ARGV ?=
+
+#
+#: dynamically defined global variables and functions
+#
 
 ifeq ($(origin ENJENV_BIN),undefined)
 ENJENV_BIN:=$(shell which enjenv)
@@ -104,10 +124,6 @@ ENJENV_EXE:=$(shell \
 	fi)
 endif
 
-ENJENV_PKG  ?= github.com/go-enjin/enjenv/cmd/enjenv@latest
-ENJENV_DIR_NAME ?= .enjenv
-ENJENV_DIR ?= ${ENJENV_DIR_NAME}
-
 ifeq ($(origin ENJENV_PATH),undefined)
 ENJENV_PATH := $(shell \
 	echo "_enjenv_path" >> ${_INTERNAL_BUILD_LOG_}; \
@@ -117,8 +133,6 @@ ENJENV_PATH := $(shell \
 		echo "${PWD}/${ENJENV_DIR}"; \
 	fi)
 endif
-
-UNTAGGED_VERSION ?= v0.0.0
 
 ifeq ($(origin VERSION),undefined)
 VERSION := $(shell \
@@ -134,13 +148,6 @@ RELEASE := $(shell \
 		${ENJENV_EXE} rel-ver; \
 	fi)
 endif
-
-PROFILE_PATH ?= .
-
-EXTRA_LDFLAGS ?=
-EXTRA_GCFLAGS ?=
-
-RUN_ARGV ?=
 
 _MAKE_TARGETS := $($(MAKE) list-make-targets 2>/dev/null)
 
@@ -187,7 +194,29 @@ _DEPS_PRESENT := $(shell \
 _BUILD_ARGS = $(shell \
 	echo "_build_args" >> ${_INTERNAL_BUILD_LOG_}; \
 	if [ "${RELEASE_BUILD}" == "true" ]; then \
-		echo " --optimize "; \
+		echo " --optimize"; \
+	fi)
+
+_BUILD_ARGV = $(shell \
+	echo "_build_argv" >> ${_INTERNAL_BUILD_LOG_}; \
+	if [ "${RELEASE_BUILD}" == "true" ]; then \
+		echo "${BUILD_ARGV}"; \
+	else \
+		echo "${DEV_BUILD_ARGV}"; \
+	fi)
+
+_EXTRA_LDFLAGS := $(shell \
+	if [ "${RELEASE_BUILD}" == true ]; then \
+		echo "${BUILD_LDFLAGS}"; \
+	else \
+		echo "${DEV_BUILD_LDFLAGS}"; \
+	fi)
+
+_EXTRA_GCFLAGS := $(shell \
+	if [ "${RELEASE_BUILD}" == true ]; then \
+		echo "${BUILD_GCFLAGS}"; \
+	else \
+		echo "${DEV_BUILD_GCFLAGS}"; \
 	fi)
 
 _BUILD_TAGS = $(shell \
@@ -484,6 +513,10 @@ if [ -n "${ENJENV_EXE}" -a -x "${ENJENV_EXE}" ]; then \
 		fi; \
 fi)
 
+#
+#: actual make targets
+#
+
 help:
 	@echo "${APP_NAME} - ${APP_SUMMARY}"
 	@echo
@@ -737,8 +770,8 @@ build: export BE_SUMMARY=${APP_SUMMARY}
 build: export BE_ENV_PREFIX=${ENV_PREFIX}
 build: export BE_VERSION=${VERSION}
 build: export BE_RELEASE=${RELEASE}
-build: export ENJENV_GO_LDFLAGS=${EXTRA_LDFLAGS}
-build: export ENJENV_GO_GCFLAGS=${EXTRA_GCFLAGS}
+build: export ENJENV_GO_LDFLAGS=${_EXTRA_LDFLAGS}
+build: export ENJENV_GO_GCFLAGS=${_EXTRA_GCFLAGS}
 build: _golang ${EXTRA_BUILD_TARGET_DEPS}
 ifdef pre_build
 	@$(call pre_build)
@@ -751,7 +784,8 @@ else
 	else \
 		echo "# Building debug: ${VERSION}, ${RELEASE}"; \
 	fi
-	@${CMD} ${ENJENV_EXE} golang build ${_BUILD_ARGS} -- -v ${_BUILD_TAGS}
+	@echo "## (LDFLAGS): \"${ENJENV_GO_LDFLAGS}\" ; (GCFLAGS): \"${ENJENV_GO_GCFLAGS}\""
+	@${CMD} ${ENJENV_EXE} golang build ${_BUILD_ARGS} -- -v ${_BUILD_TAGS} ${_BUILD_ARGV}
 	@if [ -x "./${APP_NAME}" ]; then \
 		echo "# produced: ${APP_NAME}"; \
 		sha256sum ./${APP_NAME}; \
@@ -966,7 +1000,7 @@ stop:
 					[ -n "$${ANSWER}" ] && echo ""; \
 					if [ -z "$${ANSWER}" -o "$${ANSWER}" == "y" -o "$${ANSWER}" == "Y" ]; then \
 						for pid in $${RP_TREE}; do \
-							${CMD} kill -TERM $${pid} 2> /dev/null; \
+							${CMD} kill -KILL $${pid} 2> /dev/null; \
 						done; \
 						echo "# terminated: $${RP_TREE}"; \
 					fi; \
