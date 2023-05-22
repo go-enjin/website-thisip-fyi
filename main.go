@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/go-enjin/be/pkg/userbase"
 	"github.com/go-enjin/golang-org-x-text/language"
 
 	"github.com/go-enjin/be"
@@ -42,15 +43,13 @@ var (
 	fPublic  feature.Feature
 	fMenu    feature.Feature
 
-	fCachePagesPql  feature.Feature
-	fCacheFsContent feature.Feature
+	fCachePagesPql feature.Feature
 
 	hotReload bool
 )
 
 func init() {
 	fCachePagesPql = gocache.NewTagged(gPagesPqlKvsFeature).AddMemoryCache(gPagesPqlKvsCache).Make()
-	fCacheFsContent = gocache.NewTagged(gFsContentKvsFeature).AddMemoryCache(gFsContentKvsCache).Make()
 }
 
 func setup(eb *be.EnjinBuilder) *be.EnjinBuilder {
@@ -59,7 +58,6 @@ func setup(eb *be.EnjinBuilder) *be.EnjinBuilder {
 		SiteCopyrightName("Go-Enjin").
 		SiteCopyrightNotice("© 2022 All rights reserved").
 		AddFeature(fCachePagesPql).
-		AddFeature(fCacheFsContent).
 		AddFeature(pql.NewTagged("pages-pql").
 			SetKeyValueCache(gPagesPqlKvsFeature, gPagesPqlKvsCache).
 			Make()).
@@ -89,6 +87,7 @@ func features(eb feature.Builder) feature.Builder {
 		AddFeature(thisip.New().Make()).
 		SetStatusPage(404, "/404").
 		SetStatusPage(500, "/500").
+		SetPublicAccess(gPublicActions...).
 		HotReload(hotReload)
 }
 
@@ -107,6 +106,12 @@ func main() {
 		os.Exit(1)
 	}
 }
+
+var (
+	gPublicActions = userbase.Actions{
+		userbase.NewAction("fs-content", "view", "page"),
+	}
+)
 
 const (
 	gFsContentKvsFeature = "fs-content-kvs-feature"

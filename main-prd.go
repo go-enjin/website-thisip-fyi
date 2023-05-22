@@ -49,7 +49,6 @@ func init() {
 	fContent = content.New().
 		MountEmbedPath("/", "content", contentFsWWW).
 		AddToIndexProviders("pages-pql").
-		SetKeyValueCache(gFsContentKvsFeature, gFsContentKvsCache).
 		Make()
 
 	fThemes = themes.New().
