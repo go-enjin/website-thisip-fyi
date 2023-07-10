@@ -30,7 +30,7 @@
 .PHONY: _yarn_tag_install
 .PHONY: list-make-targets
 
-ENJIN_MK_VERSION = v0.2.8
+ENJIN_MK_VERSION = v0.2.9
 
 SHELL = /bin/bash
 
@@ -74,6 +74,7 @@ GO_MOD ?= 1020
 NODEJS ?=
 
 RELEASE_BUILD ?= false
+PRE_RELEASE_BUILD ?= false
 
 GO_ENJIN_PKG ?= github.com/go-enjin/be
 
@@ -199,7 +200,7 @@ _BUILD_ARGS = $(shell \
 
 _BUILD_ARGV = $(shell \
 	echo "_build_argv" >> ${_INTERNAL_BUILD_LOG_}; \
-	if [ "${RELEASE_BUILD}" == "true" ]; then \
+	if [ "${RELEASE_BUILD}" == "true" -o "${PRE_RELEASE_BUILD}" == "true" ]; then \
 		echo "${BUILD_ARGV}"; \
 	else \
 		echo "${DEV_BUILD_ARGV}"; \
@@ -221,7 +222,7 @@ _EXTRA_GCFLAGS := $(shell \
 
 _BUILD_TAGS = $(shell \
 echo "_build_tags" >> ${_INTERNAL_BUILD_LOG_}; \
-if [ "${RELEASE_BUILD}" == "true" ]; then \
+if [ "${RELEASE_BUILD}" == "true" -o "${PRE_RELEASE_BUILD}" == "true" ]; then \
 	if [ "${BUILD_TAGS}" != "" ]; then \
 		tags=`echo "${BUILD_TAGS}" | perl -pe 's!\s+!,!msg;s!,$$!!;'`; \
 		echo "-tags $${tags}"; \
@@ -779,7 +780,9 @@ endif
 ifdef override_build
 	@$(call override_build)
 else
-	@if [ "${RELEASE_BUILD}" == "true" ]; then \
+	@if [ "${PRE_RELEASE_BUILD}" == "true" ]; then \
+		echo "# Building pre-release: ${VERSION}, ${RELEASE}"; \
+	elif [ "${RELEASE_BUILD}" == "true" ]; then \
 		echo "# Building release: ${VERSION}, ${RELEASE}"; \
 	else \
 		echo "# Building debug: ${VERSION}, ${RELEASE}"; \
@@ -798,6 +801,9 @@ endif
 release: export RELEASE_BUILD=true
 release: build
 	@$(call _upx_build,"${APP_NAME}")
+
+pre-release: export PRE_RELEASE_BUILD=true
+pre-release: build
 
 run: _HAS_O_RUN_=$(call is_defined,override_run)
 run: _HAS_O_DLV_=$(call is_defined,override_dlv)
@@ -950,7 +956,15 @@ endif
 build-dev-run: build
 	@( $(MAKE) dev 2>&1 ) | perl -p -e 'use Term::ANSIColor qw(colored);while (my $$line = <>) {print STDOUT process_line($$line)."\n";}exit(0);sub process_line {my ($$line) = @_;chomp($$line);if ($$line =~ m!^\[(\d+\-\d+\.\d+)\]\s+([A-Z]+)\s+(.+?)\s*$$!) {my ($$datestamp, $$level, $$message) = ($$1, $$2, $$3);my $$colour = "white";if ($$level eq "ERROR") {$$colour = "bold white on_red";} elsif ($$level eq "INFO") {$$colour = "green";} elsif ($$level eq "DEBUG") {$$colour = "yellow";}my $$out = "[".colored($$datestamp, "blue")."]";$$out .= " ".colored($$level, $$colour);if ($$level eq "DEBUG") {$$out .= "\t";if ($$message =~ m!^(.+?)\:(\d+)\s+\[(.+?)\]\s+(.+?)\s*$$!) {my ($$file, $$ln, $$tag, $$info) = ($$1, $$2, $$3, $$4);$$out .= colored($$file, "bright_blue");$$out .= ":".colored($$ln, "blue");$$out .= " [".colored($$tag, "bright_blue")."]";$$out .= " ".colored($$info, "bold cyan");} else {$$out .= $$message;}} elsif ($$level eq "ERROR") {$$out .= "\t".colored($$message, $$colour);} elsif ($$level eq "INFO") {$$out .= "\t".colored($$message, $$colour);} else {$$out .= "\t".$$message;}return $$out;}return $$line;}'
 
+build-dev-run-quiet: build
+	@( $(MAKE) dev 2>&1 ) \
+		| egrep -v '(\s/media/|\s/css/|\.chunk\.)' - \
+		| perl -p -e 'use Term::ANSIColor qw(colored);while (my $$line = <>) {print STDOUT process_line($$line)."\n";}exit(0);sub process_line {my ($$line) = @_;chomp($$line);if ($$line =~ m!^\[(\d+\-\d+\.\d+)\]\s+([A-Z]+)\s+(.+?)\s*$$!) {my ($$datestamp, $$level, $$message) = ($$1, $$2, $$3);my $$colour = "white";if ($$level eq "ERROR") {$$colour = "bold white on_red";} elsif ($$level eq "INFO") {$$colour = "green";} elsif ($$level eq "DEBUG") {$$colour = "yellow";}my $$out = "[".colored($$datestamp, "blue")."]";$$out .= " ".colored($$level, $$colour);if ($$level eq "DEBUG") {$$out .= "\t";if ($$message =~ m!^(.+?)\:(\d+)\s+\[(.+?)\]\s+(.+?)\s*$$!) {my ($$file, $$ln, $$tag, $$info) = ($$1, $$2, $$3, $$4);$$out .= colored($$file, "bright_blue");$$out .= ":".colored($$ln, "blue");$$out .= " [".colored($$tag, "bright_blue")."]";$$out .= " ".colored($$info, "bold cyan");} else {$$out .= $$message;}} elsif ($$level eq "ERROR") {$$out .= "\t".colored($$message, $$colour);} elsif ($$level eq "INFO") {$$out .= "\t".colored($$message, $$colour);} else {$$out .= "\t".$$message;}return $$out;}return $$line;}'
+
 release-dev-run: release
+	@( $(MAKE) dev 2>&1 ) | perl -p -e 'use Term::ANSIColor qw(colored);while (my $$line = <>) {print STDOUT process_line($$line)."\n";}exit(0);sub process_line {my ($$line) = @_;chomp($$line);if ($$line =~ m!^\[(\d+\-\d+\.\d+)\]\s+([A-Z]+)\s+(.+?)\s*$$!) {my ($$datestamp, $$level, $$message) = ($$1, $$2, $$3);my $$colour = "white";if ($$level eq "ERROR") {$$colour = "bold white on_red";} elsif ($$level eq "INFO") {$$colour = "green";} elsif ($$level eq "DEBUG") {$$colour = "yellow";}my $$out = "[".colored($$datestamp, "blue")."]";$$out .= " ".colored($$level, $$colour);if ($$level eq "DEBUG") {$$out .= "\t";if ($$message =~ m!^(.+?)\:(\d+)\s+\[(.+?)\]\s+(.+?)\s*$$!) {my ($$file, $$ln, $$tag, $$info) = ($$1, $$2, $$3, $$4);$$out .= colored($$file, "bright_blue");$$out .= ":".colored($$ln, "blue");$$out .= " [".colored($$tag, "bright_blue")."]";$$out .= " ".colored($$info, "bold cyan");} else {$$out .= $$message;}} elsif ($$level eq "ERROR") {$$out .= "\t".colored($$message, $$colour);} elsif ($$level eq "INFO") {$$out .= "\t".colored($$message, $$colour);} else {$$out .= "\t".$$message;}return $$out;}return $$line;}'
+
+pre-release-dev-run: pre-release
 	@( $(MAKE) dev 2>&1 ) | perl -p -e 'use Term::ANSIColor qw(colored);while (my $$line = <>) {print STDOUT process_line($$line)."\n";}exit(0);sub process_line {my ($$line) = @_;chomp($$line);if ($$line =~ m!^\[(\d+\-\d+\.\d+)\]\s+([A-Z]+)\s+(.+?)\s*$$!) {my ($$datestamp, $$level, $$message) = ($$1, $$2, $$3);my $$colour = "white";if ($$level eq "ERROR") {$$colour = "bold white on_red";} elsif ($$level eq "INFO") {$$colour = "green";} elsif ($$level eq "DEBUG") {$$colour = "yellow";}my $$out = "[".colored($$datestamp, "blue")."]";$$out .= " ".colored($$level, $$colour);if ($$level eq "DEBUG") {$$out .= "\t";if ($$message =~ m!^(.+?)\:(\d+)\s+\[(.+?)\]\s+(.+?)\s*$$!) {my ($$file, $$ln, $$tag, $$info) = ($$1, $$2, $$3, $$4);$$out .= colored($$file, "bright_blue");$$out .= ":".colored($$ln, "blue");$$out .= " [".colored($$tag, "bright_blue")."]";$$out .= " ".colored($$info, "bold cyan");} else {$$out .= $$message;}} elsif ($$level eq "ERROR") {$$out .= "\t".colored($$message, $$colour);} elsif ($$level eq "INFO") {$$out .= "\t".colored($$message, $$colour);} else {$$out .= "\t".$$message;}return $$out;}return $$line;}'
 
 stop:
