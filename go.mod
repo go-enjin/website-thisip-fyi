@@ -3,9 +3,9 @@ module github.com/go-enjin/website-thisip-fyi
 go 1.20
 
 require (
-	github.com/go-enjin/be v0.2.13
+	github.com/go-enjin/be v0.2.15
 	github.com/go-enjin/golang-org-x-text v0.7.1-enjin.0
-	github.com/go-enjin/semantic-enjin-theme v0.2.13
+	github.com/go-enjin/semantic-enjin-theme v0.2.15
 	github.com/likexian/whois v1.14.3
 	github.com/urfave/cli/v2 v2.14.1
 )
@@ -97,6 +97,7 @@ require (
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
+	github.com/puzpuzpuz/xsync/v2 v2.4.1 // indirect
 	github.com/rivo/uniseg v0.4.2 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
