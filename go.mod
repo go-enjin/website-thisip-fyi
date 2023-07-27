@@ -3,9 +3,9 @@ module github.com/go-enjin/website-thisip-fyi
 go 1.20
 
 require (
-	github.com/go-enjin/be v0.2.15
+	github.com/go-enjin/be v0.2.16
 	github.com/go-enjin/golang-org-x-text v0.7.1-enjin.0
-	github.com/go-enjin/semantic-enjin-theme v0.2.15
+	github.com/go-enjin/semantic-enjin-theme v0.2.16
 	github.com/likexian/whois v1.14.3
 	github.com/urfave/cli/v2 v2.14.1
 )
