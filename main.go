@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/go-enjin/be/pkg/userbase"
 	"github.com/go-enjin/golang-org-x-text/language"
 
 	"github.com/go-enjin/be"
@@ -33,7 +32,7 @@ import (
 	"github.com/go-enjin/be/features/user/base/htenv"
 	"github.com/go-enjin/be/pkg/feature"
 	"github.com/go-enjin/be/pkg/lang"
-
+	"github.com/go-enjin/be/pkg/userbase"
 	"github.com/go-enjin/website-thisip-fyi/pkg/features/thisip"
 )
 
@@ -52,26 +51,25 @@ func init() {
 	fCachePagesPql = gocache.NewTagged(gPagesPqlKvsFeature).AddMemoryCache(gPagesPqlKvsCache).Make()
 }
 
-func setup(eb *be.EnjinBuilder) *be.EnjinBuilder {
-	eb.SiteName("ThisIp.Fyi").
+func main() {
+	enjin := be.New().
+		SiteName("ThisIp.Fyi").
 		SiteTagLine("This IP for your information.").
 		SiteCopyrightName("Go-Enjin").
 		SiteCopyrightNotice("© 2022 All rights reserved").
+		SiteDefaultLanguage(language.English).
+		SiteLanguageMode(lang.NewPathMode().Make()).
+		SiteSupportedLanguages(language.English).
+		Set("SiteTitleReversed", true).
+		Set("SiteTitleSeparator", " | ").
+		Set("SiteLogoUrl", "/media/go-enjin-logo.png").
+		Set("SiteLogoAlt", "Go-Enjin logo").SiteTag("TIPFYI").
 		AddFeature(fCachePagesPql).
 		AddFeature(pql.NewTagged("pages-pql").
 			SetKeyValueCache(gPagesPqlKvsFeature, gPagesPqlKvsCache).
 			Make()).
 		AddFeature(formats.New().Defaults().Make()).
 		AddFeature(fThemes).
-		Set("SiteTitleReversed", true).
-		Set("SiteTitleSeparator", " | ").
-		Set("SiteLogoUrl", "/media/go-enjin-logo.png").
-		Set("SiteLogoAlt", "Go-Enjin logo")
-	return eb
-}
-
-func features(eb feature.Builder) feature.Builder {
-	return eb.
 		AddFeature(papertrail.Make()).
 		AddFeature(htmlify.New().Make()).
 		AddFeature(proxy.New().Enable().Make()).
@@ -88,16 +86,7 @@ func features(eb feature.Builder) feature.Builder {
 		SetStatusPage(404, "/404").
 		SetStatusPage(500, "/500").
 		SetPublicAccess(gPublicActions...).
-		HotReload(hotReload)
-}
-
-func main() {
-	enjin := be.New()
-	setup(enjin).SiteTag("TIPFYI").
-		SiteDefaultLanguage(language.English).
-		SiteLanguageMode(lang.NewPathMode().Make()).
-		SiteSupportedLanguages(language.English)
-	features(enjin).
+		HotReload(hotReload).
 		AddFeature(fMenu).
 		AddFeature(fPublic).
 		AddFeature(fContent)
