@@ -19,7 +19,6 @@ import (
 	"net"
 	"net/http"
 	"strings"
-	"sync"
 
 	"github.com/urfave/cli/v2"
 
@@ -32,14 +31,15 @@ import (
 )
 
 var (
-	_ MakeFeature               = (*CFeature)(nil)
-	_ feature.PageTypeProcessor = (*CFeature)(nil)
+	_ Feature     = (*CFeature)(nil)
+	_ MakeFeature = (*CFeature)(nil)
 )
 
-const Tag feature.Tag = "PagesThisIp"
+const Tag feature.Tag = "pages-thisip"
 
 type Feature interface {
 	feature.Feature
+	feature.PageTypeProcessor
 }
 
 type CFeature struct {
@@ -50,8 +50,6 @@ type CFeature struct {
 
 	whois    map[string]*whois.Info
 	nslookup map[string][]string
-
-	sync.RWMutex
 }
 
 type MakeFeature interface {
@@ -64,14 +62,14 @@ func New() MakeFeature {
 	return f
 }
 
-func (f *CFeature) Make() Feature {
-	return f
-}
-
 func (f *CFeature) Init(this interface{}) {
 	f.CFeature.Init(this)
 	f.whois = make(map[string]*whois.Info)
 	f.nslookup = make(map[string][]string)
+}
+
+func (f *CFeature) Make() Feature {
+	return f
 }
 
 func (f *CFeature) Tag() (tag feature.Tag) {
