@@ -1,6 +1,6 @@
 #!/usr/bin/make --no-print-directory --jobs=1 --environment-overrides -f
 
-# Copyright (c) 2022  The Go-Enjin Authors
+# Copyright (c) 2023  The Go-Enjin Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,20 +18,22 @@
 
 BE_LOCAL_PATH ?= ../be
 
-APP_NAME    ?= be-thisip-fyi
-APP_SUMMARY ?= thisip.fyi
+APP_NAME    := be-thisip-fyi
+APP_SUMMARY := thisip.fyi
 
 DENY_DURATION ?= 60
 
-COMMON_TAGS += htmlify
-COMMON_TAGS += papertrail
-COMMON_TAGS += header_proxy
-COMMON_TAGS += basic_auth
+ADD_TAGS_DEFAULTS := true
+
+COMMON_TAGS += driver_fs_embed
 COMMON_TAGS += driver_kvs_gocache memory
+COMMON_TAGS += log_papertrail
+COMMON_TAGS += user_auth_basic
+COMMON_TAGS += user_base_htenv
 COMMON_TAGS += page_pql
 COMMON_TAGS += page_robots
-COMMON_TAGS += driver_fs_embed
 COMMON_TAGS += fs_theme fs_menu fs_content fs_public
+COMMON_TAGS += ngrokio
 
 BUILD_TAGS     = production embeds $(COMMON_TAGS)
 DEV_BUILD_TAGS = locals $(COMMON_TAGS)
