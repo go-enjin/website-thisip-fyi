@@ -25,8 +25,6 @@ import (
 	"github.com/go-enjin/be/pkg/feature"
 	"github.com/go-enjin/be/pkg/log"
 	beNet "github.com/go-enjin/be/pkg/net"
-	"github.com/go-enjin/be/pkg/page"
-
 	"github.com/go-enjin/website-thisip-fyi/pkg/whois"
 )
 
@@ -42,6 +40,10 @@ type Feature interface {
 	feature.PageTypeProcessor
 }
 
+type MakeFeature interface {
+	Make() Feature
+}
+
 type CFeature struct {
 	feature.CFeature
 
@@ -52,13 +54,15 @@ type CFeature struct {
 	nslookup map[string][]string
 }
 
-type MakeFeature interface {
-	Make() Feature
+func New() MakeFeature {
+	return NewTagged(Tag)
 }
 
-func New() MakeFeature {
+func NewTagged(tag feature.Tag) MakeFeature {
 	f := new(CFeature)
 	f.Init(f)
+	f.PackageTag = Tag
+	f.FeatureTag = tag
 	return f
 }
 
@@ -86,43 +90,43 @@ func (f *CFeature) Startup(ctx *cli.Context) (err error) {
 	return
 }
 
-func (f *CFeature) ProcessRequestPageType(r *http.Request, p *page.Page) (pg *page.Page, redirect string, processed bool, err error) {
+func (f *CFeature) ProcessRequestPageType(r *http.Request, p feature.Page) (pg feature.Page, redirect string, processed bool, err error) {
 	// reqArgv := site.GetRequestArgv(r)
-	if p.Type == "thisip" {
+	if p.Type() == "thisip" {
 		userAgent := r.UserAgent()
 		switch {
 
 		case strings.HasPrefix(userAgent, "curl/"):
 			p = p.Copy()
-			p.Layout = "none"
-			p.Context.SetSpecific("Layout", "none")
-			p.Context.SetSpecific("ContentType", "text/plain; charset=utf-8")
-			p.Content = r.RemoteAddr
-			p.Context.SetSpecific("Content", r.RemoteAddr)
+			p.SetLayout("none")
+			p.Context().SetSpecific("Layout", "none")
+			p.Context().SetSpecific("ContentType", "text/plain; charset=utf-8")
+			p.SetContent(r.RemoteAddr)
+			p.Context().SetSpecific("Content", r.RemoteAddr)
 
 		case strings.HasPrefix(userAgent, "Wget/") || strings.HasPrefix(userAgent, "wget/"):
 			p = p.Copy()
-			p.Layout = "none"
-			p.Context.SetSpecific("Layout", "none")
-			p.Context.SetSpecific("ContentType", "text/plain; charset=utf-8")
+			p.SetLayout("none")
+			p.Context().SetSpecific("Layout", "none")
+			p.Context().SetSpecific("ContentType", "text/plain; charset=utf-8")
 			content := "address: " + r.RemoteAddr
 			whoisInfo, nslookup := f.lookupInfo(r.RemoteAddr)
 			content += "\n\nnslookup: " + strings.Join(nslookup, ", ")
 			if whoisInfo != nil {
 				content += "\n\nwhois:\n" + whoisInfo.Response
 			}
-			p.Content = content
-			p.Context.SetSpecific("Content", content)
-			p.Context.SetSpecific("ContentDisposition", fmt.Sprintf(`attachment; filename="%s.txt"`, r.RemoteAddr))
+			p.SetContent(content)
+			p.Context().SetSpecific("Content", content)
+			p.Context().SetSpecific("ContentDisposition", fmt.Sprintf(`attachment; filename="%s.txt"`, r.RemoteAddr))
 
 		default:
 			whoisInfo, nslookup := f.lookupInfo(r.RemoteAddr)
 			if whoisInfo != nil {
-				p.Context.SetSpecific("Whois", whoisInfo)
+				p.Context().SetSpecific("Whois", whoisInfo)
 			}
-			p.Context.SetSpecific("LookupAddr", nslookup)
+			p.Context().SetSpecific("LookupAddr", nslookup)
 		}
-		p.Context.SetSpecific("Title", r.RemoteAddr)
+		p.Context().SetSpecific("Title", r.RemoteAddr)
 		pg = p
 		processed = true
 	}
