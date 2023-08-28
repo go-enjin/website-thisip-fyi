@@ -22,18 +22,25 @@ import (
 
 	"github.com/go-enjin/be"
 	"github.com/go-enjin/be/drivers/kvs/gocache"
-	"github.com/go-enjin/be/features/log/papertrail"
-	"github.com/go-enjin/be/features/outputs/htmlify"
-	"github.com/go-enjin/be/features/pages/formats"
 	"github.com/go-enjin/be/features/pages/pql"
 	"github.com/go-enjin/be/features/pages/robots"
-	"github.com/go-enjin/be/features/requests/headers/proxy"
-	"github.com/go-enjin/be/features/user/auth/basic"
-	"github.com/go-enjin/be/features/user/base/htenv"
 	"github.com/go-enjin/be/pkg/feature"
 	"github.com/go-enjin/be/pkg/lang"
-	"github.com/go-enjin/be/pkg/userbase"
+	"github.com/go-enjin/be/presets/defaults"
 	"github.com/go-enjin/website-thisip-fyi/pkg/features/thisip"
+)
+
+var (
+	gPublicActions = feature.Actions{
+		feature.NewAction("enjin", "view", "page"),
+		feature.NewAction("fs-content", "view", "page"),
+	}
+)
+
+const (
+	gPagesPqlFeature    = "pages-pql"
+	gPagesPqlKvsFeature = "pages-pql-kvs-feature"
+	gPagesPqlKvsCache   = "pages-pql-kvs-cache"
 )
 
 var (
@@ -42,17 +49,14 @@ var (
 	fPublic  feature.Feature
 	fMenu    feature.Feature
 
-	fCachePagesPql feature.Feature
+	fListener feature.ServiceListener
 
 	hotReload bool
 )
 
-func init() {
-	fCachePagesPql = gocache.NewTagged(gPagesPqlKvsFeature).AddMemoryCache(gPagesPqlKvsCache).Make()
-}
-
 func main() {
 	enjin := be.New().
+		SiteTag("TIPFYI").
 		SiteName("ThisIp.Fyi").
 		SiteTagLine("This IP for your information.").
 		SiteCopyrightName("Go-Enjin").
@@ -63,21 +67,13 @@ func main() {
 		Set("SiteTitleReversed", true).
 		Set("SiteTitleSeparator", " | ").
 		Set("SiteLogoUrl", "/media/go-enjin-logo.png").
-		Set("SiteLogoAlt", "Go-Enjin logo").SiteTag("TIPFYI").
-		AddFeature(fCachePagesPql).
-		AddFeature(pql.NewTagged("pages-pql").
+		Set("SiteLogoAlt", "Go-Enjin logo").
+		AddPreset(defaults.New().SetListener(fListener).Make()).
+		AddFeature(gocache.NewTagged(gPagesPqlKvsFeature).AddMemoryCache(gPagesPqlKvsCache).Make()).
+		AddFeature(pql.NewTagged(gPagesPqlFeature).
 			SetKeyValueCache(gPagesPqlKvsFeature, gPagesPqlKvsCache).
 			Make()).
-		AddFeature(formats.New().Defaults().Make()).
 		AddFeature(fThemes).
-		AddFeature(papertrail.Make()).
-		AddFeature(htmlify.New().Make()).
-		AddFeature(proxy.New().Enable().Make()).
-		AddFeature(htenv.NewTagged("htenv").Make()).
-		AddFeature(basic.New().
-			AddUserbase("htenv", "htenv", "htenv").
-			Ignore(`^/favicon.ico$`).
-			Make()).
 		AddFeature(robots.New().
 			AddRuleGroup(robots.NewRuleGroup().
 				AddUserAgent("*").AddDisallowed("/").Make(),
@@ -95,23 +91,3 @@ func main() {
 		os.Exit(1)
 	}
 }
-
-var (
-	gPublicActions = userbase.Actions{
-		userbase.NewAction("fs-content", "view", "page"),
-	}
-)
-
-const (
-	gFsContentKvsFeature = "fs-content-kvs-feature"
-	gFsContentKvsCache   = "fs-content-kvs-cache"
-	gPagesPqlKvsFeature  = "pages-pql-kvs-feature"
-	gPagesPqlKvsCache    = "pages-pql-kvs-cache"
-
-	main500tmpl = `500 - Internal Server Error`
-	main404tmpl = `404 - Not Found`
-	main204tmpl = `+++
-url = "/"
-+++
-204 - {{ _ "No Content" }}`
-)

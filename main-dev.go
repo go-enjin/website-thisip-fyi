@@ -17,6 +17,7 @@
 package main
 
 import (
+	"github.com/go-enjin/be/features/srv/listeners/ngrokio"
 	semantic "github.com/go-enjin/semantic-enjin-theme"
 
 	"github.com/go-enjin/be/features/fs/content"
@@ -39,14 +40,16 @@ func init() {
 		Make()
 	fContent = content.New().
 		MountLocalPath("/", "content").
-		AddToIndexProviders("pages-pql").
+		AddToIndexProviders(gPagesPqlFeature).
 		Make()
 
 	fThemes = themes.New().
-		AddTheme(semantic.Theme()).
+		Include(semantic.Theme()).
 		LocalTheme("themes/thisip-fyi").
 		SetTheme("thisip-fyi").
 		Make()
+
+	fListener = ngrokio.New().Make()
 
 	hotReload = true
 }

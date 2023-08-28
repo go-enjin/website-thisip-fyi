@@ -48,11 +48,11 @@ func init() {
 		Make()
 	fContent = content.New().
 		MountEmbedPath("/", "content", contentFsWWW).
-		AddToIndexProviders("pages-pql").
+		AddToIndexProviders(gPagesPqlFeature).
 		Make()
 
 	fThemes = themes.New().
-		AddTheme(semantic.Theme()).
+		Include(semantic.Theme()).
 		EmbedTheme("themes/thisip-fyi", themeFs).
 		SetTheme("thisip-fyi").
 		Make()
