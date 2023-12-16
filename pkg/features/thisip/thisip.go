@@ -90,6 +90,11 @@ func (f *CFeature) Startup(ctx *cli.Context) (err error) {
 	return
 }
 
+func (f *CFeature) PageTypeNames() (names []string) {
+	names = []string{"thisip"}
+	return
+}
+
 func (f *CFeature) ProcessRequestPageType(r *http.Request, p feature.Page) (pg feature.Page, redirect string, processed bool, err error) {
 	// reqArgv := site.GetRequestArgv(r)
 	if p.Type() == "thisip" {
