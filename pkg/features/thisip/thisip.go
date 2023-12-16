@@ -23,8 +23,12 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/go-enjin/be/pkg/feature"
+	"github.com/go-enjin/be/pkg/lang"
 	"github.com/go-enjin/be/pkg/log"
 	beNet "github.com/go-enjin/be/pkg/net"
+
+	"github.com/go-enjin/golang-org-x-text/message"
+
 	"github.com/go-enjin/website-thisip-fyi/pkg/whois"
 )
 
@@ -115,7 +119,7 @@ func (f *CFeature) ProcessRequestPageType(r *http.Request, p feature.Page) (pg f
 			p.Context().SetSpecific("Layout", "none")
 			p.Context().SetSpecific("ContentType", "text/plain; charset=utf-8")
 			content := "address: " + r.RemoteAddr
-			whoisInfo, nslookup := f.lookupInfo(r.RemoteAddr)
+			whoisInfo, nslookup := f.lookupInfo(r.RemoteAddr, r)
 			content += "\n\nnslookup: " + strings.Join(nslookup, ", ")
 			if whoisInfo != nil {
 				content += "\n\nwhois:\n" + whoisInfo.Response
@@ -125,7 +129,7 @@ func (f *CFeature) ProcessRequestPageType(r *http.Request, p feature.Page) (pg f
 			p.Context().SetSpecific("ContentDisposition", fmt.Sprintf(`attachment; filename="%s.txt"`, r.RemoteAddr))
 
 		default:
-			whoisInfo, nslookup := f.lookupInfo(r.RemoteAddr)
+			whoisInfo, nslookup := f.lookupInfo(r.RemoteAddr, r)
 			if whoisInfo != nil {
 				p.Context().SetSpecific("Whois", whoisInfo)
 			}
@@ -138,13 +142,16 @@ func (f *CFeature) ProcessRequestPageType(r *http.Request, p feature.Page) (pg f
 	return
 }
 
-func (f *CFeature) lookupInfo(addr string) (info *whois.Info, nslookup []string) {
+func (f *CFeature) lookupInfo(addr string, r *http.Request) (info *whois.Info, nslookup []string) {
 	var ok bool
 	var err error
 
+	var printer *message.Printer
+	printer = lang.GetPrinterFromRequest(r)
+
 	if beNet.IsNetIpPrivate(net.ParseIP(addr)) {
 		info = nil
-		nslookup = append(nslookup, "(local/private address)")
+		nslookup = append(nslookup, printer.Sprintf("(local/private address)"))
 		return
 	}
 
