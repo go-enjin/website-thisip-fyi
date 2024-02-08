@@ -22,12 +22,10 @@ import (
 
 	"github.com/urfave/cli/v2"
 
+	"github.com/go-corelibs/x-text/message"
 	"github.com/go-enjin/be/pkg/feature"
-	"github.com/go-enjin/be/pkg/lang"
 	"github.com/go-enjin/be/pkg/log"
 	beNet "github.com/go-enjin/be/pkg/net"
-
-	"github.com/go-enjin/golang-org-x-text/message"
 
 	"github.com/go-enjin/website-thisip-fyi/pkg/whois"
 )
@@ -146,8 +144,7 @@ func (f *CFeature) lookupInfo(addr string, r *http.Request) (info *whois.Info, n
 	var ok bool
 	var err error
 
-	var printer *message.Printer
-	printer = lang.GetPrinterFromRequest(r)
+	printer := message.GetPrinter(r)
 
 	if beNet.IsNetIpPrivate(net.ParseIP(addr)) {
 		info = nil
