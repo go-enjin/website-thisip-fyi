@@ -14,42 +14,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package thisip_fyi
 
 import (
-	"github.com/go-enjin/be/features/srv/listeners/ngrokio"
+	"path/filepath"
+	"runtime"
+
 	semantic "github.com/go-enjin/semantic-enjin-theme"
+	thisip_fyi "github.com/go-enjin/website-thisip-fyi/themes/thisip-fyi"
 
 	"github.com/go-enjin/be/features/fs/content"
 	"github.com/go-enjin/be/features/fs/menu"
 	"github.com/go-enjin/be/features/fs/public"
 	"github.com/go-enjin/be/features/fs/themes"
-	"github.com/go-enjin/be/pkg/log"
 )
 
 func init() {
 	// locals environment, early startup debug logging
-	log.Config.LogLevel = log.LevelDebug
-	log.Config.Apply()
+	//log.Config.LogLevel = log.LevelDebug
+	//log.Config.Apply()
+
+	_, fn, _, _ := runtime.Caller(0)
+	path := filepath.Dir(fn)
 
 	fMenu = menu.New().
-		MountLocalPath("/", "menus").
+		MountLocalPath("/", path+"/menus").
 		Make()
 	fPublic = public.New().
-		MountLocalPath("/", "public").
+		MountLocalPath("/", path+"/public").
 		Make()
 	fContent = content.New().
-		MountLocalPath("/", "content").
+		MountLocalPath("/", path+"/content").
 		AddToIndexProviders(gPagesPqlFeature).
 		Make()
 
 	fThemes = themes.New().
 		Include(semantic.Theme()).
-		LocalTheme("themes/thisip-fyi").
+		Include(thisip_fyi.Theme()).
 		SetTheme("thisip-fyi").
 		Make()
-
-	fListener = ngrokio.New().Make()
 
 	hotReload = true
 }

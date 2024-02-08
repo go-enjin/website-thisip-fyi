@@ -14,17 +14,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package thisip_fyi
 
 import (
 	"embed"
-
-	semantic "github.com/go-enjin/semantic-enjin-theme"
 
 	"github.com/go-enjin/be/features/fs/content"
 	"github.com/go-enjin/be/features/fs/menu"
 	"github.com/go-enjin/be/features/fs/public"
 	"github.com/go-enjin/be/features/fs/themes"
+	semantic "github.com/go-enjin/semantic-enjin-theme"
+	thisip_fyi "github.com/go-enjin/website-thisip-fyi/themes/thisip-fyi"
 )
 
 //go:embed content/**
@@ -53,7 +53,7 @@ func init() {
 
 	fThemes = themes.New().
 		Include(semantic.Theme()).
-		EmbedTheme("themes/thisip-fyi", themeFs).
+		Include(thisip_fyi.Theme()).
 		SetTheme("thisip-fyi").
 		Make()
 

@@ -12,14 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package thisip_fyi
 
 import (
-	"fmt"
-	"os"
-
-	"github.com/go-enjin/golang-org-x-text/language"
-
+	"github.com/go-corelibs/x-text/language"
 	"github.com/go-enjin/be"
 	"github.com/go-enjin/be/drivers/kvs/gocache"
 	"github.com/go-enjin/be/features/pages/pql"
@@ -49,14 +45,14 @@ var (
 	fPublic  feature.Feature
 	fMenu    feature.Feature
 
-	fListener feature.ServiceListener
+	Listener feature.ServiceListener
 
 	hotReload bool
 )
 
-func main() {
-	enjin := be.New().
-		SiteTag("TIPFYI").
+func New() (enjin *be.EnjinBuilder) {
+	enjin = be.New()
+	enjin.SiteTag("TIPFYI").
 		SiteName("ThisIp.Fyi").
 		SiteTagLine("This IP for your information.").
 		SiteCopyrightName("Go-Enjin").
@@ -68,7 +64,7 @@ func main() {
 		Set("SiteTitleSeparator", " | ").
 		Set("SiteLogoUrl", "/media/go-enjin-logo.png").
 		Set("SiteLogoAlt", "Go-Enjin logo").
-		AddPreset(defaults.New().SetListener(fListener).Make()).
+		AddPreset(defaults.New().SetListener(Listener).Make()).
 		AddFeature(gocache.NewTagged(gPagesPqlKvsFeature).AddMemoryCache(gPagesPqlKvsCache).Make()).
 		AddFeature(pql.NewTagged(gPagesPqlFeature).
 			SetKeyValueCache(gPagesPqlKvsFeature, gPagesPqlKvsCache).
@@ -86,8 +82,5 @@ func main() {
 		AddFeature(fMenu).
 		AddFeature(fPublic).
 		AddFeature(fContent)
-	if err := enjin.Build().Run(os.Args); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "%v\n", err)
-		os.Exit(1)
-	}
+	return
 }
