@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build fs_theme && !all && (drivers_fs_embed || drivers_fs || drivers || embeds)
+//go:build (fs_theme && (drivers_fs_local || drivers_fs || drivers || locals) && !drivers_fs_embed && !embeds) || all
 
-package thisip_fyi
+package themes
 
 import (
-	"embed"
+	"path/filepath"
+	"runtime"
 
 	"github.com/go-enjin/be/features/fs/themes"
 )
 
-//go:embed ./**
-var themeFS embed.FS
-
 func Theme() themes.Feature {
+	_, fn, _, _ := runtime.Caller(0)
+	path := filepath.Join(filepath.Dir(fn), Name)
 	return themes.
 		NewTagged(Name).
-		EmbedTheme(Name, themeFS).
+		LocalTheme(path).
 		Make()
 }

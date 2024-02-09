@@ -12,22 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build (fs_theme && (drivers_fs_local || drivers_fs || drivers || locals) && !drivers_fs_embed && !embeds) || all
+//go:build fs_theme || all
 
-package thisip_fyi
+package themes
 
-import (
-	"path/filepath"
-	"runtime"
-
-	"github.com/go-enjin/be/features/fs/themes"
-)
-
-func Theme() themes.Feature {
-	_, fn, _, _ := runtime.Caller(0)
-	path := filepath.Dir(fn)
-	return themes.
-		NewTagged(Name).
-		LocalTheme(path).
-		Make()
-}
+const Name = "thisip-fyi"
