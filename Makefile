@@ -17,9 +17,11 @@
 -include .env
 
 BE_LOCAL_PATH ?= ../be
+CL_LOCAL_PATH ?= ../../go-corelibs
 
 APP_NAME    := be-thisip-fyi
 APP_SUMMARY := thisip.fyi
+APP_COMMAND := ./cmd/${APP_NAME}
 
 DENY_DURATION ?= 60
 
@@ -33,25 +35,15 @@ COMMON_TAGS += user_base_htenv
 COMMON_TAGS += page_pql
 COMMON_TAGS += page_robots
 COMMON_TAGS += fs_theme fs_menu fs_content fs_public
-COMMON_TAGS += ngrokio
 
 BUILD_TAGS     = production embeds $(COMMON_TAGS)
-DEV_BUILD_TAGS = locals $(COMMON_TAGS)
+DEV_BUILD_TAGS = locals ngrokio $(COMMON_TAGS)
 
 # Custom go.mod locals
-GOPKG_KEYS = SET DJHT
+GOPKG_KEYS += _TIMES
+GOPKG_KEYS += _SEMANTIC_THEME
 
-# Semantic Enjin Theme
-SET_GO_PACKAGE = github.com/go-enjin/semantic-enjin-theme
-SET_LOCAL_PATH = ../semantic-enjin-theme
-
-# Go-Enjin gotext package (manual v-enjin.0 releases)
-GOXT_GO_PACKAGE = github.com/go-enjin/golang-org-x-text
-GOXT_LOCAL_PATH = ../golang-org-x-text
-
-# Go-Enjin times package
-DJHT_GO_PACKAGE = github.com/go-enjin/github-com-djherbis-times
-DJHT_LOCAL_PATH = ../github-com-djherbis-times
+AUTO_CORELIBS_KEYS := true
 
 #MAKE_THEME_LOCALES   := true
 #MAKE_SOURCE_LOCALES  := true
