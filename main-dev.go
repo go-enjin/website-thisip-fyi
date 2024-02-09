@@ -21,7 +21,7 @@ import (
 	"runtime"
 
 	semantic "github.com/go-enjin/semantic-enjin-theme"
-	thisip_fyi "github.com/go-enjin/website-thisip-fyi/themes/thisip-fyi"
+	thisip_fyi "github.com/go-enjin/website-thisip-fyi/themes"
 
 	"github.com/go-enjin/be/features/fs/content"
 	"github.com/go-enjin/be/features/fs/menu"
@@ -46,12 +46,6 @@ func init() {
 	fContent = content.New().
 		MountLocalPath("/", path+"/content").
 		AddToIndexProviders(gPagesPqlFeature).
-		Make()
-
-	fThemes = themes.New().
-		Include(semantic.Theme()).
-		Include(thisip_fyi.Theme()).
-		SetTheme("thisip-fyi").
 		Make()
 
 	hotReload = true

@@ -15,14 +15,19 @@
 package thisip_fyi
 
 import (
+	semantic "github.com/go-enjin/semantic-enjin-theme"
+	thisip_fyi "github.com/go-enjin/website-thisip-fyi/themes"
+
 	"github.com/go-corelibs/x-text/language"
 	"github.com/go-enjin/be"
 	"github.com/go-enjin/be/drivers/kvs/gocache"
+	"github.com/go-enjin/be/features/fs/themes"
 	"github.com/go-enjin/be/features/pages/pql"
 	"github.com/go-enjin/be/features/pages/robots"
 	"github.com/go-enjin/be/pkg/feature"
 	"github.com/go-enjin/be/pkg/lang"
 	"github.com/go-enjin/be/presets/defaults"
+
 	"github.com/go-enjin/website-thisip-fyi/pkg/features/thisip"
 )
 
@@ -40,7 +45,6 @@ const (
 )
 
 var (
-	fThemes  feature.Feature
 	fContent feature.Feature
 	fPublic  feature.Feature
 	fMenu    feature.Feature
@@ -69,7 +73,11 @@ func New() (enjin *be.EnjinBuilder) {
 		AddFeature(pql.NewTagged(gPagesPqlFeature).
 			SetKeyValueCache(gPagesPqlKvsFeature, gPagesPqlKvsCache).
 			Make()).
-		AddFeature(fThemes).
+		AddFeature(themes.New().
+			Include(semantic.Theme()).
+			Include(thisip_fyi.Theme()).
+			SetTheme("thisip-fyi").
+			Make()).
 		AddFeature(robots.New().
 			AddRuleGroup(robots.NewRuleGroup().
 				AddUserAgent("*").AddDisallowed("/").Make(),

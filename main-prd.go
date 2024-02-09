@@ -22,9 +22,6 @@ import (
 	"github.com/go-enjin/be/features/fs/content"
 	"github.com/go-enjin/be/features/fs/menu"
 	"github.com/go-enjin/be/features/fs/public"
-	"github.com/go-enjin/be/features/fs/themes"
-	semantic "github.com/go-enjin/semantic-enjin-theme"
-	thisip_fyi "github.com/go-enjin/website-thisip-fyi/themes/thisip-fyi"
 )
 
 //go:embed content/**
@@ -36,10 +33,8 @@ var publicFs embed.FS
 //go:embed menus/**
 var menuFsWWW embed.FS
 
-//go:embed themes/**
-var themeFs embed.FS
-
 func init() {
+
 	fMenu = menu.New().
 		MountEmbedPath("/", "menus", menuFsWWW).
 		Make()
@@ -49,12 +44,6 @@ func init() {
 	fContent = content.New().
 		MountEmbedPath("/", "content", contentFsWWW).
 		AddToIndexProviders(gPagesPqlFeature).
-		Make()
-
-	fThemes = themes.New().
-		Include(semantic.Theme()).
-		Include(thisip_fyi.Theme()).
-		SetTheme("thisip-fyi").
 		Make()
 
 	hotReload = false
