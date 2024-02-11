@@ -20,13 +20,9 @@ import (
 	"path/filepath"
 	"runtime"
 
-	semantic "github.com/go-enjin/semantic-enjin-theme"
-	thisip_fyi "github.com/go-enjin/website-thisip-fyi/themes"
-
 	"github.com/go-enjin/be/features/fs/content"
 	"github.com/go-enjin/be/features/fs/menu"
 	"github.com/go-enjin/be/features/fs/public"
-	"github.com/go-enjin/be/features/fs/themes"
 )
 
 func init() {
