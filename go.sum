@@ -213,12 +213,12 @@ github.com/go-curses/term v1.2.2-gocurses.1 h1:wUi7qtaZQO9q7+YpX8nGBDoFJd7aWZeo2
 github.com/go-curses/term v1.2.2-gocurses.1/go.mod h1:ZuwRe9U+iLY2qTuhzg/kg0Pc9bZdfcJCtfHrjGvZtVA=
 github.com/go-curses/terminfo v1.1.0 h1:rZlQdmG63pueovR0Y9/aIv4X3pkuM5OAjoltuODC3x8=
 github.com/go-curses/terminfo v1.1.0/go.mod h1:3cAGarEfP6wdhHYmUI2xAx14cu+cfIIQYXehy2q/zUg=
-github.com/go-enjin/be v0.5.7 h1:Dgew8YhRgT3RXTc32P+nw65wWYwv9IxN0npCKuHaYjQ=
-github.com/go-enjin/be v0.5.7/go.mod h1:LqbUi32erYan2Gl47bJwO7w3QVF+80ttIbl4sT6kAbk=
+github.com/go-enjin/be v0.5.9 h1:+vwBqH9yJPouIgtAG5/H8dceY2C2fiQWU99NgqtTjHk=
+github.com/go-enjin/be v0.5.9/go.mod h1:LqbUi32erYan2Gl47bJwO7w3QVF+80ttIbl4sT6kAbk=
 github.com/go-enjin/github-com-djherbis-times v0.0.0-20221101184323-aeef8854ee8a h1:Qr7FpRTxEBnNJtyYj6TyVPs12bn45xSLFkygcSby1g4=
 github.com/go-enjin/github-com-djherbis-times v0.0.0-20221101184323-aeef8854ee8a/go.mod h1:hId0+St26leJQkTRaFYATZHMGja4wrv0hzf5SwKs3hA=
-github.com/go-enjin/semantic-enjin-theme v0.5.7 h1:NmAjTvWlC/pcADW5N5J0RfhaCTbkpHZIv727bU0aze8=
-github.com/go-enjin/semantic-enjin-theme v0.5.7/go.mod h1:p/wWjEa+Fx4gOnNvMzT5tWaD2QrR8PKmRrgiQVcUQDw=
+github.com/go-enjin/semantic-enjin-theme v0.5.9 h1:KA0h1/NME2kngzCWKxJltOGzP0yFrIth2VZfUql7+tU=
+github.com/go-enjin/semantic-enjin-theme v0.5.9/go.mod h1:j3tMnhlzGEarrlF88RUHSwF/0rilGMftmzQe5Iuzbmc=
 github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200222043503-6f7a984d4dc4/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=

@@ -4,8 +4,8 @@ go 1.21.6
 
 require (
 	github.com/go-corelibs/x-text v0.14.1
-	github.com/go-enjin/be v0.5.7
-	github.com/go-enjin/semantic-enjin-theme v0.5.7
+	github.com/go-enjin/be v0.5.9
+	github.com/go-enjin/semantic-enjin-theme v0.5.9
 	github.com/likexian/whois v1.15.1
 	github.com/urfave/cli/v2 v2.27.1
 )
