@@ -4,8 +4,8 @@ go 1.21.6
 
 require (
 	github.com/go-corelibs/x-text v0.14.1
-	github.com/go-enjin/be v0.5.10
-	github.com/go-enjin/semantic-enjin-theme v0.5.10
+	github.com/go-enjin/be v0.5.11
+	github.com/go-enjin/semantic-enjin-theme v0.5.11
 	github.com/likexian/whois v1.15.1
 	github.com/urfave/cli/v2 v2.27.1
 )
@@ -68,14 +68,14 @@ require (
 	github.com/go-corelibs/maps v1.1.0 // indirect
 	github.com/go-corelibs/maths v1.0.1 // indirect
 	github.com/go-corelibs/mime v1.0.0 // indirect
-	github.com/go-corelibs/path v1.2.0 // indirect
+	github.com/go-corelibs/path v1.3.0 // indirect
 	github.com/go-corelibs/replace v1.3.2 // indirect
 	github.com/go-corelibs/shasum v1.0.0 // indirect
 	github.com/go-corelibs/slices v1.3.0 // indirect
 	github.com/go-corelibs/strcases v1.0.0 // indirect
-	github.com/go-corelibs/strings v1.1.2 // indirect
+	github.com/go-corelibs/strings v1.4.0 // indirect
 	github.com/go-corelibs/templates v1.0.0 // indirect
-	github.com/go-corelibs/values v1.0.0 // indirect
+	github.com/go-corelibs/values v1.1.0 // indirect
 	github.com/go-curses/cdk v0.5.22 // indirect
 	github.com/go-curses/ctk v0.5.13 // indirect
 	github.com/go-curses/term v1.2.2-gocurses.1 // indirect
@@ -144,8 +144,8 @@ require (
 	go.etcd.io/bbolt v1.3.8 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.ngrok.com/muxado/v2 v2.0.0 // indirect
-	golang.ngrok.com/ngrok v1.8.0 // indirect
-	golang.ngrok.com/ngrok/log/logrus v0.0.0-20240131162834-d82702ea0264 // indirect
+	golang.ngrok.com/ngrok v1.8.1 // indirect
+	golang.ngrok.com/ngrok/log/logrus v0.0.0-20240212161800-4d959c47e21f // indirect
 	golang.org/x/crypto v0.19.0 // indirect
 	golang.org/x/exp v0.0.0-20240112132812-db7319d0e0e3 // indirect
 	golang.org/x/net v0.21.0 // indirect
@@ -155,6 +155,7 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/datatypes v1.2.0 // indirect
 	gorm.io/driver/mysql v1.5.4 // indirect
