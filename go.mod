@@ -4,8 +4,8 @@ go 1.21.6
 
 require (
 	github.com/go-corelibs/x-text v0.14.1
-	github.com/go-enjin/be v0.5.11
-	github.com/go-enjin/semantic-enjin-theme v0.5.11
+	github.com/go-enjin/be v0.5.12
+	github.com/go-enjin/semantic-enjin-theme v0.5.12
 	github.com/likexian/whois v1.15.1
 	github.com/urfave/cli/v2 v2.27.1
 )
@@ -57,23 +57,23 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/ganbarodigital/go_glob v1.0.0 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
-	github.com/go-chi/chi/v5 v5.0.11 // indirect
+	github.com/go-chi/chi/v5 v5.0.12 // indirect
 	github.com/go-chi/hostrouter v0.2.0 // indirect
 	github.com/go-corelibs/diff v1.1.1 // indirect
 	github.com/go-corelibs/env v1.1.1 // indirect
 	github.com/go-corelibs/fmtstr v1.2.0 // indirect
 	github.com/go-corelibs/globs v1.0.0 // indirect
 	github.com/go-corelibs/htmlcss v1.0.0 // indirect
-	github.com/go-corelibs/lang v0.1.0 // indirect
+	github.com/go-corelibs/lang v0.2.0 // indirect
 	github.com/go-corelibs/maps v1.1.0 // indirect
 	github.com/go-corelibs/maths v1.0.1 // indirect
 	github.com/go-corelibs/mime v1.0.0 // indirect
 	github.com/go-corelibs/path v1.3.0 // indirect
 	github.com/go-corelibs/replace v1.3.2 // indirect
 	github.com/go-corelibs/shasum v1.0.0 // indirect
-	github.com/go-corelibs/slices v1.3.0 // indirect
+	github.com/go-corelibs/slices v1.4.0 // indirect
 	github.com/go-corelibs/strcases v1.0.0 // indirect
-	github.com/go-corelibs/strings v1.4.0 // indirect
+	github.com/go-corelibs/strings v1.5.1 // indirect
 	github.com/go-corelibs/templates v1.0.0 // indirect
 	github.com/go-corelibs/values v1.1.0 // indirect
 	github.com/go-curses/cdk v0.5.22 // indirect
@@ -135,7 +135,7 @@ require (
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spkg/zipfs v0.7.1 // indirect
-	github.com/tdewolff/parse/v2 v2.7.11 // indirect
+	github.com/tdewolff/parse/v2 v2.7.12 // indirect
 	github.com/tg123/go-htpasswd v1.2.2 // indirect
 	github.com/weppos/publicsuffix-go v0.30.1 // indirect
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2 // indirect
