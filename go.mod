@@ -1,6 +1,6 @@
 module github.com/go-enjin/website-thisip-fyi
 
-go 1.21.6
+go 1.22.4
 
 require (
 	github.com/go-corelibs/x-text v0.14.1
