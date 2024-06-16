@@ -41,7 +41,7 @@ func init() {
 		Make()
 	fContent = content.New().
 		MountLocalPath("/", path+"/content").
-		AddToIndexProviders(gPagesPqlFeature).
+		AddToIndexProviders(gSrvEqlFeature).
 		Make()
 
 	hotReload = true

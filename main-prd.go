@@ -43,7 +43,7 @@ func init() {
 		Make()
 	fContent = content.New().
 		MountEmbedPath("/", "content", contentFsWWW).
-		AddToIndexProviders(gPagesPqlFeature).
+		AddToIndexProviders(gSrvEqlFeature).
 		Make()
 
 	hotReload = false

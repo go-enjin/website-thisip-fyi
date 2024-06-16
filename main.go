@@ -15,14 +15,13 @@
 package thisip_fyi
 
 import (
+	"github.com/go-enjin/be/features/srv/eql"
 	semantic "github.com/go-enjin/semantic-enjin-theme"
 	thisip_fyi "github.com/go-enjin/website-thisip-fyi/themes"
 
 	"github.com/go-corelibs/x-text/language"
 	"github.com/go-enjin/be"
-	"github.com/go-enjin/be/drivers/kvs/gocache"
 	"github.com/go-enjin/be/features/fs/themes"
-	"github.com/go-enjin/be/features/pages/pql"
 	"github.com/go-enjin/be/features/pages/robots"
 	"github.com/go-enjin/be/pkg/feature"
 	"github.com/go-enjin/be/pkg/lang"
@@ -39,9 +38,8 @@ var (
 )
 
 const (
-	gPagesPqlFeature    = "pages-pql"
-	gPagesPqlKvsFeature = "pages-pql-kvs-feature"
-	gPagesPqlKvsCache   = "pages-pql-kvs-cache"
+	gSrvEqlFeature  = "tf-srv-eql"
+	gSrvEqlDatabase = "tf-srv-eql"
 )
 
 var (
@@ -69,10 +67,10 @@ func New() (enjin *be.EnjinBuilder) {
 		Set("SiteLogoUrl", "/media/go-enjin-logo.png").
 		Set("SiteLogoAlt", "Go-Enjin logo").
 		AddPreset(defaults.New().SetListener(Listener).Make()).
-		AddFeature(gocache.NewTagged(gPagesPqlKvsFeature).AddMemoryCache(gPagesPqlKvsCache).Make()).
-		AddFeature(pql.NewTagged(gPagesPqlFeature).
-			SetKeyValueCache(gPagesPqlKvsFeature, gPagesPqlKvsCache).
-			Make()).
+		//AddFeature(gorm.New().
+		//	SetPreset(gSrvEqlDatabase, "sqlite", ":memory:").
+		//	Make()).
+		AddFeature(eql.NewTagged(gSrvEqlFeature).Make()).
 		AddFeature(themes.New().
 			Include(semantic.Theme()).
 			Include(thisip_fyi.Theme()).
