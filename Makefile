@@ -27,11 +27,13 @@ DENY_DURATION ?= 60
 
 ADD_TAGS_DEFAULTS := true
 
+COMMON_TAGS += driver_db_gorm driver_fs_db_gorm sqlite
 COMMON_TAGS += driver_fs_embed
 COMMON_TAGS += driver_kvs_gocache memory
-COMMON_TAGS += log_papertrail
 COMMON_TAGS += user_auth_basic
 COMMON_TAGS += user_base_htenv
+COMMON_TAGS += papertrail
+COMMON_TAGS += srv_eql
 COMMON_TAGS += page_pql
 COMMON_TAGS += page_robots
 COMMON_TAGS += fs_theme fs_menu fs_content fs_public
@@ -40,7 +42,6 @@ BUILD_TAGS     = production embeds $(COMMON_TAGS)
 DEV_BUILD_TAGS = locals ngrokio $(COMMON_TAGS)
 
 # Custom go.mod locals
-GOPKG_KEYS += _TIMES
 GOPKG_KEYS += _SEMANTIC_THEME
 
 AUTO_CORELIBS_KEYS := true
