@@ -58,7 +58,7 @@ func New() (enjin *be.EnjinBuilder) {
 		SiteName("ThisIp.Fyi").
 		SiteTagLine("This IP for your information.").
 		SiteCopyrightName("Go-Enjin").
-		SiteCopyrightNotice("2024 All rights reserved").
+		SiteCopyrightNotice("All rights reserved").
 		SiteDefaultLanguage(language.English).
 		SiteLanguageMode(lang.NewPathMode().Make()).
 		SiteSupportedLanguages(language.English).
