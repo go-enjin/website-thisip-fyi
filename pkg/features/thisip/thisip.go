@@ -15,10 +15,13 @@
 package thisip
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/http"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/urfave/cli/v2"
 
@@ -54,6 +57,7 @@ type CFeature struct {
 
 	whois    map[string]*whois.Info
 	nslookup map[string][]string
+	mutex    *sync.RWMutex
 }
 
 func New() MakeFeature {
@@ -65,6 +69,7 @@ func NewTagged(tag feature.Tag) MakeFeature {
 	f.Init(f)
 	f.PackageTag = Tag
 	f.FeatureTag = tag
+	f.mutex = &sync.RWMutex{}
 	return f
 }
 
@@ -152,22 +157,46 @@ func (f *CFeature) lookupInfo(addr string, r *http.Request) (info *whois.Info, n
 		return
 	}
 
-	if nslookup, ok = f.nslookup[addr]; !ok {
-		if nslookup, err = net.LookupAddr(addr); err != nil {
-			log.WarnF("error net.LookupAddr: %v - %v", addr, err.Error())
-			delete(f.nslookup, addr)
-			nslookup = make([]string, 0)
-		} else {
-			f.nslookup[addr] = nslookup
-		}
+	if info, nslookup, ok = f.checkCache(addr); ok {
+		// early out, cached result found
+		return
 	}
-	if info, ok = f.whois[addr]; !ok {
-		if info, err = whois.LookupAndParse(addr); err != nil {
-			log.WarnF("error whois.LookupAndParse: %v - %v", addr, err.Error())
-			info = nil
-		} else {
-			f.whois[addr] = info
-		}
+
+	f.clearCache(addr)
+
+	f.mutex.Lock()
+	defer f.mutex.Unlock()
+
+	resolver := &net.Resolver{}
+	ctx, _ := context.WithTimeout(context.Background(), time.Second*10)
+	if nslookup, err = resolver.LookupAddr(ctx, addr); err != nil {
+		log.DebugRF(r, "error net.LookupAddr: %v - %v", addr, err.Error())
+		nslookup = make([]string, 0)
+	} else {
+		f.nslookup[addr] = nslookup
+	}
+
+	if info, err = whois.LookupAndParseWith(time.Second*10, addr); err != nil {
+		log.DebugRF(r, "error whois.LookupAndParse: %v - %v", addr, err.Error())
+		info = nil
+	} else {
+		f.whois[addr] = info
 	}
 	return
+}
+
+func (f *CFeature) checkCache(addr string) (info *whois.Info, nslookup []string, ok bool) {
+	f.mutex.RLock()
+	defer f.mutex.RUnlock()
+	if nslookup, ok = f.nslookup[addr]; ok {
+		info, ok = f.whois[addr]
+	}
+	return
+}
+
+func (f *CFeature) clearCache(addr string) {
+	f.mutex.Lock()
+	defer f.mutex.Unlock()
+	delete(f.nslookup, addr)
+	delete(f.whois, addr)
 }
