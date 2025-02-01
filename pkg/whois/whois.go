@@ -17,6 +17,7 @@ package whois
 import (
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/likexian/whois"
 )
@@ -65,6 +66,22 @@ func LookupAndParse(addr string) (info *Info, err error) {
 
 func LookupIP(addr string) (response string, err error) {
 	response, err = whois.Whois(addr)
+	return
+}
+
+func LookupAndParseWith(timeout time.Duration, addr string) (info *Info, err error) {
+	var response string
+	if response, err = LookupIPWith(timeout, addr); err != nil {
+		return
+	}
+	info = ParseResponse(response)
+	return
+}
+
+func LookupIPWith(timeout time.Duration, addr string) (response string, err error) {
+	c := whois.NewClient()
+	c.SetTimeout(timeout)
+	response, err = c.Whois(addr)
 	return
 }
 
