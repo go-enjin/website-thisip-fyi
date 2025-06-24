@@ -22,7 +22,7 @@ import (
 )
 
 func main() {
-	if err := thisip_fyi.New().Build().Run(os.Args); err != nil {
+	if err := thisip_fyi.New(false).Build().Run(os.Args); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}

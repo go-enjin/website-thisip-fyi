@@ -52,8 +52,13 @@ var (
 	hotReload bool
 )
 
-func New() (enjin *be.EnjinBuilder) {
+func New(omitLogs bool) (enjin *be.EnjinBuilder) {
 	enjin = be.New()
+	definst := defaults.New()
+	if omitLogs {
+		definst.OmitLogs()
+	}
+	definst = definst.SetListener(Listener)
 	enjin.SiteTag("TIPFYI").
 		SiteName("ThisIp.Fyi").
 		SiteTagLine("This IP for your information.").
@@ -66,7 +71,7 @@ func New() (enjin *be.EnjinBuilder) {
 		Set("SiteTitleSeparator", " | ").
 		Set("SiteLogoUrl", "/media/go-enjin-logo.png").
 		Set("SiteLogoAlt", "Go-Enjin logo").
-		AddPreset(defaults.New().SetListener(Listener).Make()).
+		AddPreset(definst.Make()).
 		//AddFeature(gorm.New().
 		//	SetPreset(gSrvEqlDatabase, "sqlite", ":memory:").
 		//	Make()).
